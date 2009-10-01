@@ -4,6 +4,7 @@ use warnings;
 our $VERSION = '0.01';
 use 5.008000;
 use Module::Install::ForC::Env;
+use Config;
 
 use Module::Install::Base;
 our @ISA     = qw(Module::Install::Base);
@@ -32,6 +33,7 @@ all: @Module::Install::ForC::targets
 clean:
 	rm @Module::Install::ForC::targets @{[ keys %Module::Install::ForC::OBJECTS ]}
 	rm Makefile
+	$Config{rm_try}
 
 $Module::Install::ForC::postamble
 ...
@@ -102,7 +104,7 @@ $env contains the build environment variables.The key name is a generic value fo
 
 =head1 FAQ
 
-=over4
+=over 4
 
 =item How to check that a library is available.
 

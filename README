@@ -68,9 +68,9 @@ POD ERRORS
     Hey! The above document had some coding errors, which are explained
     below:
 
-    Around line 105:
+    Around line 107:
         Unknown directive: =over4
 
-    Around line 107:
+    Around line 109:
         '=item' outside of any '=over'
 

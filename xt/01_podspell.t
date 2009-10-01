@@ -8,3 +8,4 @@ __DATA__
 Tokuhiro Matsuno
 tokuhirom  slkjfd gmail.com
 Module::Install::ForC
+FAQ
