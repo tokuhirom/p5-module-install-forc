@@ -100,6 +100,18 @@ $env contains the build environment variables.The key name is a generic value fo
 
 =back
 
+=head1 FAQ
+
+=over4
+
+=item How to check that a library is available.
+
+You can use Module::Install::CheckLib.
+
+    checklib lib => 'jpeg', header => 'jpeglib.h';
+
+=back
+
 =head1 AUTHOR
 
 Tokuhiro Matsuno E<lt>tokuhirom  slkjfd gmail.comE<gt>

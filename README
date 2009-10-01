@@ -48,6 +48,12 @@ FUNCTIONS
         generic value for C.If you want to know about key names, see also
         Module::Install::ForC::Env.
 
+FAQ
+    How to check that a library is available.
+        You can use Module::Install::CheckLib.
+
+            checklib lib => 'jpeg', header => 'jpeglib.h';
+
 AUTHOR
     Tokuhiro Matsuno <tokuhirom slkjfd gmail.com>
 
@@ -57,4 +63,14 @@ SEE ALSO
 LICENSE
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
+
+POD ERRORS
+    Hey! The above document had some coding errors, which are explained
+    below:
+
+    Around line 105:
+        Unknown directive: =over4
+
+    Around line 107:
+        '=item' outside of any '=over'
 
