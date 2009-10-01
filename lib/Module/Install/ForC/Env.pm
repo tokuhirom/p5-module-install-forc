@@ -12,6 +12,7 @@ sub new {
         LDFLAGS  => $Config{ldflags},
         OPTIMIZE => $Config{optimize},
         CCFLAGS  => $Config{ccflags},
+        CPPPATH  => [],
         LIBS     => [],
         @_
     };
@@ -83,7 +84,7 @@ This class expression the build environments.
 =item M::I::ForC::Env->new(%env)
 
 This method create the new instance of M::I::ForC::Env.
-%env can take a generic vars.
+%env can take a generic variables.
 
 The default value is following:
 
@@ -98,7 +99,7 @@ You can use env() for shortcut, see L<Module::Install::ForC>.
 
 =item $env->clone()
 
-clone the instnace.
+clone the instance.
 
 =item $env->append($key, $val)
 

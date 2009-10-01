@@ -74,7 +74,7 @@ Module::Install::ForC - the power of M::I for C programs
 
 Module::Install::ForC is a extension library for Module::Install.
 
-This module provides some useful functions for writing C/C++ programs/libraries, doesn't depened to Perl.
+This module provides some useful functions for writing C/C++ programs/libraries, doesn't depend to Perl.
 
 M::Install is useful for Perl/XS programming, but this module provides M::I power for C/C++ programs!You can use this module as replacement of autoconf/automake for easy case.
 
@@ -106,7 +106,7 @@ Tokuhiro Matsuno E<lt>tokuhirom  slkjfd gmail.comE<gt>
 
 =head1 SEE ALSO
 
-This module is inspired by L<SCons|http://www.scons.org/>.
+This module is inspired by SCons(L<http://www.scons.org/>).
 
 =head1 LICENSE
 

@@ -1,27 +1,60 @@
-This is Perl module Module::Install::ForC.
+NAME
+    Module::Install::ForC - the power of M::I for C programs
 
-INSTALLATION
+SYNOPSIS
+        # in your Makefile.PL
+        use inc::Module::Install;
 
-Module::Install::ForC installation is straightforward. If your CPAN shell is set up,
-you should just be able to do
+        my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+        $env->program('testechoclient' => ["testechoclient.c"]);
 
-    % cpan Module::Install::ForC
+        WriteMakefileForC();
 
-Download it, unpack it, then build it as per the usual:
+        # then, you will get the Makefile:
+        all: testechoclient
 
-    % perl Makefile.PL
-    % make && make test
+        clean:
+            rm testechoclient testechoclient.o
+            rm Makefile
 
-Then install it:
+        testechoclient: testechoclient.o
+            cc   -fstack-protector -L/usr/local/lib -o testechoclient testechoclient.o
 
-    % make install
+        testechoclient.o: testechoclient.c
+            cc -DDEBUGGING -fno-strict-aliasing -pipe -fstack-protector -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I picoev/ -I picohttpparser/ -c -o testechoclient.o testechoclient.c
 
-DOCUMENTATION
+DESCRIPTION
+    Module::Install::ForC is a extension library for Module::Install.
 
-Module::Install::ForC documentation is available as in POD. So you can do:
+    This module provides some useful functions for writing C/C++
+    programs/libraries, doesn't depend to Perl.
 
-    % perldoc Module::Install::ForC
+    M::Install is useful for Perl/XS programming, but this module provides
+    M::I power for C/C++ programs!You can use this module as replacement of
+    autoconf/automake for easy case.
 
-to read the documentation online with your favorite pager.
+FUNCTIONS
+    is_linux()
+    is_mac()
+        Is this the OS or not?
 
-Tokuhiro Matsuno
+    WriteMakefileForC()
+        Write makefile in M::I::ForC style.
+
+    my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+        env() returns the instance of M::I::ForC::Env.
+
+        $env contains the build environment variables.The key name is a
+        generic value for C.If you want to know about key names, see also
+        Module::Install::ForC::Env.
+
+AUTHOR
+    Tokuhiro Matsuno <tokuhirom slkjfd gmail.com>
+
+SEE ALSO
+    This module is inspired by SCons(<http://www.scons.org/>).
+
+LICENSE
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+

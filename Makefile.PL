@@ -1,6 +1,7 @@
 use inc::Module::Install;
 name 'Module-Install-ForC';
 all_from 'lib/Module/Install/ForC.pm';
+readme_from 'lib/Module/Install/ForC.pm';
 
 # requires '';
 
