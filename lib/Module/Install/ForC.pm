@@ -44,21 +44,69 @@ __END__
 
 =head1 NAME
 
-Module::Install::ForC -
+Module::Install::ForC - the power of M::I for C programs
 
 =head1 SYNOPSIS
 
-  use Module::Install::ForC;
+    # in your Makefile.PL
+    use inc::Module::Install;
+
+    my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+    $env->program('testechoclient' => ["testechoclient.c"]);
+
+    WriteMakefileForC();
+
+    # then, you will get the Makefile:
+    all: testechoclient
+
+    clean:
+        rm testechoclient testechoclient.o
+        rm Makefile
+
+    testechoclient: testechoclient.o
+        cc   -fstack-protector -L/usr/local/lib -o testechoclient testechoclient.o
+
+    testechoclient.o: testechoclient.c
+        cc -DDEBUGGING -fno-strict-aliasing -pipe -fstack-protector -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I picoev/ -I picohttpparser/ -c -o testechoclient.o testechoclient.c
+
 
 =head1 DESCRIPTION
 
-Module::Install::ForC is
+Module::Install::ForC is a extension library for Module::Install.
+
+This module provides some useful functions for writing C/C++ programs/libraries, doesn't depened to Perl.
+
+M::Install is useful for Perl/XS programming, but this module provides M::I power for C/C++ programs!You can use this module as replacement of autoconf/automake for easy case.
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item is_linux()
+
+=item is_mac()
+
+Is this the OS or not?
+
+=item WriteMakefileForC()
+
+Write makefile in M::I::ForC style.
+
+=item my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+
+env() returns the instance of M::I::ForC::Env.
+
+$env contains the build environment variables.The key name is a generic value for C.If you want to know about key names, see also L<Module::Install::ForC::Env>.
+
+=back
 
 =head1 AUTHOR
 
 Tokuhiro Matsuno E<lt>tokuhirom  slkjfd gmail.comE<gt>
 
 =head1 SEE ALSO
+
+This module is inspired by L<SCons|http://www.scons.org/>.
 
 =head1 LICENSE
 
