@@ -13,7 +13,7 @@ our @targets;
 our %OBJECTS;
 our $postamble;
 
-sub env {
+sub env_for_c {
     my $self = shift;
     Module::Install::ForC::Env->new(@_)
 }
@@ -53,7 +53,7 @@ Module::Install::ForC - the power of M::I for C programs
     # in your Makefile.PL
     use inc::Module::Install;
 
-    my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+    my $env = env_for_c(CPPPATH => ['picoev/', 'picohttpparser/']);
     $env->program('testechoclient' => ["testechoclient.c"]);
 
     WriteMakefileForC();
@@ -94,7 +94,7 @@ Is this the OS or not?
 
 Write makefile in M::I::ForC style.
 
-=item my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+=item my $env = env_for_c(CPPPATH => ['picoev/', 'picohttpparser/']);
 
 env() returns the instance of M::I::ForC::Env.
 
