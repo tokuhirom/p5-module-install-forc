@@ -18,7 +18,12 @@ sub new {
         LIBPATH   => [],
         CCCDLFLAGS => $Config{cccdlflags},
         LIBPREFIX  => ( $^O eq 'Win32' ? '' : 'lib'),
+        LIBSUFFIX  => ($^O eq 'Win32' ? '.lib' : '.a'),
         SHLIBPREFIX  => ( $^O eq 'Win32' ? '' : 'lib'),
+        SHLIBSUFFIX  => '.'.$Config{dlext}, 
+        RANLIB     => 'ranlib',
+        PROGSUFFIX => ($Config{exe_ext} ? ('.'.$Config{exe_ext}) : ''),
+        AR         => $Config{ar},
         @_
     };
     $opt->{CPPPATH} = [$opt->{CPPPATH}] unless ref $opt->{CPPPATH};
@@ -61,13 +66,14 @@ sub program {
     my ($self, $bin, $srcs, %specific_opts) = @_;
     my $cloned = $self->clone()->append(%specific_opts);
 
-    push @Module::Install::ForC::targets, $bin;
+    my $target = "$bin" . $cloned->{PROGSUFFIX};
+    push @Module::Install::ForC::targets, $target;
 
     my @objects = _objects($srcs);
 
     $Module::Install::ForC::postamble .= <<"...";
-$bin: @objects
-	$cloned->{LD} @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]} $cloned->{LDFLAGS} -o $bin @objects
+$target: @objects
+	$cloned->{LD} $cloned->{LDFLAGS} -o $target @objects @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]}
 
 ...
 
@@ -91,7 +97,7 @@ sub shared_library {
     my ($self, $lib, $srcs, %specific_opts) = @_;
     my $clone = $self->clone->append(%specific_opts);
 
-    my $target = "$clone->{SHLIBPREFIX}$lib.$Config{dlext}";
+    my $target = "$clone->{SHLIBPREFIX}$lib$clone->{SHLIBSUFFIX}";
 
     push @Module::Install::ForC::targets, $target;
 
@@ -100,6 +106,25 @@ sub shared_library {
     $Module::Install::ForC::postamble .= <<"...";
 $target: @objects Makefile
 	$clone->{LD} $clone->{LDDLFLAGS} @{[ $clone->_libpath ]} @{[ $clone->_libs ]} $clone->{LDFLAGS} -o $target @objects
+
+...
+    $clone->_compile_objects($srcs, \@objects, $self->{CCCDLFLAGS});
+}
+
+sub static_library {
+    my ($self, $lib, $srcs, %specific_opts) = @_;
+    my $clone = $self->clone->append(%specific_opts);
+
+    my $target = "$clone->{LIBPREFIX}$lib$clone->{LIBSUFFIX}";
+
+    push @Module::Install::ForC::targets, $target;
+
+    my @objects = _objects($srcs);
+
+    $Module::Install::ForC::postamble .= <<"...";
+$target: @objects Makefile
+	$clone->{AR} rc $target @objects
+	$clone->{RANLIB} $target
 
 ...
     $clone->_compile_objects($srcs, \@objects, $self->{CCCDLFLAGS});
