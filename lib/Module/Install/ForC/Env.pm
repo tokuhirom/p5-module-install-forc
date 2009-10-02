@@ -15,7 +15,10 @@ sub new {
         LDDLFLAGS => $Config{lddlflags},
         CPPPATH   => [],
         LIBS      => [],
+        LIBPATH   => [],
         CCCDLFLAGS => $Config{cccdlflags},
+        LIBPREFIX  => ( $^O eq 'Win32' ? '' : 'lib'),
+        SHLIBPREFIX  => ( $^O eq 'Win32' ? '' : 'lib'),
         @_
     };
     $opt->{CPPPATH} = [$opt->{CPPPATH}] unless ref $opt->{CPPPATH};
@@ -57,6 +60,11 @@ sub libs {
     return map { "-l$_" } @{$self->{LIBS}};
 }
 
+sub libpath {
+    my $self = shift;
+    return join ' ', map { "-L$_" } @{$self->{LIBPATH}};
+}
+
 sub program {
     my ($self, $bin, $srcs, %specific_opts) = @_;
     my $cloned = $self->clone();
@@ -69,7 +77,7 @@ sub program {
 
     $Module::Install::ForC::postamble .= <<"...";
 $bin: @objects
-	$opts{LD} @{[ $cloned->libs ]} $opts{LDFLAGS} -o $bin @objects 
+	$opts{LD} @{[ $cloned->libpath ]} @{[ $cloned->libs ]} $opts{LDFLAGS} -o $bin @objects 
 
 ...
 
@@ -82,7 +90,7 @@ sub _compile_objects {
     for my $i (0..@$srcs-1) {
         next if $Module::Install::ForC::OBJECTS{$objects->[$i]}++ != 0;
         $Module::Install::ForC::postamble .= <<"...";
-$objects->[$i]: $srcs->[$i]
+$objects->[$i]: $srcs->[$i] Makefile
 	$self->{CC} $opt $self->{CCFLAGS} @cppopts -c -o $objects->[$i] $srcs->[$i]
 
 ...
@@ -94,13 +102,15 @@ sub shared_library {
     my $clone = $self->clone;
     $clone->append(%specific_opts);
 
-    push @Module::Install::ForC::targets, "$lib.$Config{dlext}";
+    my $target = "$clone->{SHLIBPREFIX}$lib.$Config{dlext}";
+
+    push @Module::Install::ForC::targets, $target;
 
     my @objects = _objects($srcs);
 
     $Module::Install::ForC::postamble .= <<"...";
-$lib.$Config{dlext}: @objects
-	$clone->{LD} $clone->{LDDLFLAGS} @{[ $clone->libs ]} $clone->{LDFLAGS} -o $lib.$Config{dlext} @objects
+$target: @objects Makefile
+	$clone->{LD} $clone->{LDDLFLAGS} @{[ $clone->libpath ]} @{[ $clone->libs ]} $clone->{LDFLAGS} -o $target @objects
 
 ...
     $clone->_compile_objects($srcs, \@objects, $self->{CCCDLFLAGS});

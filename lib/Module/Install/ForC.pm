@@ -27,7 +27,6 @@ sub WriteMakefileForC {
 
     open my $fh, '>', 'Makefile' or die "cannot open file: $!";
     print $fh <<"...";
-
 all: @Module::Install::ForC::targets
 
 clean:
