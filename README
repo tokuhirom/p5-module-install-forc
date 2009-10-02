@@ -5,7 +5,7 @@ SYNOPSIS
         # in your Makefile.PL
         use inc::Module::Install;
 
-        my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+        my $env = env_for_c(CPPPATH => ['picoev/', 'picohttpparser/']);
         $env->program('testechoclient' => ["testechoclient.c"]);
 
         WriteMakefileForC();
@@ -41,7 +41,7 @@ FUNCTIONS
     WriteMakefileForC()
         Write makefile in M::I::ForC style.
 
-    my $env = env(CPPPATH => ['picoev/', 'picohttpparser/']);
+    my $env = env_for_c(CPPPATH => ['picoev/', 'picohttpparser/']);
         env() returns the instance of M::I::ForC::Env.
 
         $env contains the build environment variables.The key name is a
@@ -63,14 +63,4 @@ SEE ALSO
 LICENSE
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
-
-POD ERRORS
-    Hey! The above document had some coding errors, which are explained
-    below:
-
-    Around line 107:
-        Unknown directive: =over4
-
-    Around line 109:
-        '=item' outside of any '=over'
 
