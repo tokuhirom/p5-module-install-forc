@@ -12,3 +12,4 @@ nytprof.out
 */*/test
 */*/*.a
 xt/010_simple/hello
+*/*/main

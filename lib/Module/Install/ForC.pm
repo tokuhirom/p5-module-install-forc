@@ -30,7 +30,7 @@ sub WriteMakefileForC {
     print $fh <<"...";
 all: @Module::Install::ForC::targets
 
-_test: @TESTS
+test: @TESTS
 	prove --exec "/bin/sh -c " @TESTS
 
 clean:
