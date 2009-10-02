@@ -30,15 +30,6 @@ sub clone {
     return Storable::dclone($self);
 }
 
-sub _clone_and_append {
-    my ($self, %opts) = @_;
-    my $clone = $self->clone();
-    while (my ($key, $val) = each %opts) {
-        $clone->append($key => $val);
-    }
-    return $clone;
-}
-
 sub append {
     my $self = shift;
     while (my ($key, $val) = splice(@_, 0, 2)) {
@@ -48,6 +39,7 @@ sub append {
             $self->{$key} = $val;
         }
     }
+    return $self; # for chain
 }
 
 sub _objects {
@@ -67,9 +59,7 @@ sub _libpath {
 
 sub program {
     my ($self, $bin, $srcs, %specific_opts) = @_;
-    my $cloned = $self->clone();
-    $cloned->append(%specific_opts);
-    my %opts = %$cloned;
+    my $cloned = $self->clone()->append(%specific_opts);
 
     push @Module::Install::ForC::targets, $bin;
 
@@ -77,7 +67,7 @@ sub program {
 
     $Module::Install::ForC::postamble .= <<"...";
 $bin: @objects
-	$opts{LD} @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]} $opts{LDFLAGS} -o $bin @objects 
+	$cloned->{LD} @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]} $cloned->{LDFLAGS} -o $bin @objects
 
 ...
 
@@ -99,8 +89,7 @@ $objects->[$i]: $srcs->[$i] Makefile
 
 sub shared_library {
     my ($self, $lib, $srcs, %specific_opts) = @_;
-    my $clone = $self->clone;
-    $clone->append(%specific_opts);
+    my $clone = $self->clone->append(%specific_opts);
 
     my $target = "$clone->{SHLIBPREFIX}$lib.$Config{dlext}";
 
