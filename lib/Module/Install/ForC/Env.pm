@@ -80,6 +80,7 @@ sub program {
 
     my $target = "$bin" . $clone->{PROGSUFFIX};
     push @Module::Install::ForC::targets, $target;
+    push @Module::Install::ForC::TESTS, $target if $target =~ m{^t/};
 
     my @objects = $clone->_objects($srcs);
 

@@ -12,6 +12,7 @@ our @ISA     = qw(Module::Install::Base);
 our @targets;
 our %OBJECTS;
 our $postamble;
+our @TESTS;
 
 sub env_for_c {
     my $self = shift;
@@ -28,6 +29,9 @@ sub WriteMakefileForC {
     open my $fh, '>', 'Makefile' or die "cannot open file: $!";
     print $fh <<"...";
 all: @Module::Install::ForC::targets
+
+_test: @TESTS
+	prove --exec "/bin/sh -c " @TESTS
 
 clean:
 	rm @Module::Install::ForC::targets @{[ keys %Module::Install::ForC::OBJECTS ]}
