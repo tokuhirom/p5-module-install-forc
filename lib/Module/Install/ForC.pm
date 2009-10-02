@@ -111,6 +111,11 @@ You can use Module::Install::CheckLib.
 
     checklib lib => 'jpeg', header => 'jpeglib.h';
 
+=item What's supported platforms?
+
+Currently GNU/Linux, and other POSIX systems, and OSX.
+(mattn-san add the win32 support soon :P)
+
 =back
 
 =head1 AUTHOR

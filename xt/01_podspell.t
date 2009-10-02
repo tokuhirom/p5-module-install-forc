@@ -9,3 +9,6 @@ Tokuhiro Matsuno
 tokuhirom  slkjfd gmail.com
 Module::Install::ForC
 FAQ
+OSX
+mattn
+san

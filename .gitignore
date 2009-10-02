@@ -7,3 +7,7 @@ pm_to_blib
 MANIFEST
 Makefile.old
 nytprof.out
+*/*/*.o
+*/*/*.dylib
+*/*/test
+xt/010_simple/hello b/xt/010_simple/hello
