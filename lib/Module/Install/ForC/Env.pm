@@ -76,22 +76,22 @@ sub _libpath {
 
 sub program {
     my ($self, $bin, $srcs, %specific_opts) = @_;
-    my $cloned = $self->clone()->append(%specific_opts);
+    my $clone = $self->clone()->append(%specific_opts);
 
-    my $target = "$bin" . $cloned->{PROGSUFFIX};
+    my $target = "$bin" . $clone->{PROGSUFFIX};
     push @Module::Install::ForC::targets, $target;
 
-    my @objects = $cloned->_objects($srcs);
+    my @objects = $clone->_objects($srcs);
 
-    my $opt = scalar(grep { $cloned->_is_cpp($_) } @$srcs) > 0 ? '-lstdc++' : '';
+    my $ld = $clone->_ld(@$srcs);
 
     $Module::Install::ForC::postamble .= <<"...";
 $target: @objects
-	$cloned->{LD} $opt $cloned->{LDFLAGS} -o $target @objects @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]}
+	$ld $clone->{LDFLAGS} -o $target @objects @{[ $clone->_libpath ]} @{[ $clone->_libs ]}
 
 ...
 
-    $cloned->_compile_objects($srcs, \@objects, '');
+    $clone->_compile_objects($srcs, \@objects, '');
 }
 
 sub _is_cpp {
@@ -114,6 +114,11 @@ $objects->[$i]: $srcs->[$i] Makefile
     }
 }
 
+sub _ld {
+    my ($self, @srcs) = @_;
+    (scalar(grep { $self->_is_cpp($_) } @srcs) > 0) ? $self->{CXX} : $self->{LD};
+}
+
 sub shared_library {
     my ($self, $lib, $srcs, %specific_opts) = @_;
     my $clone = $self->clone->append(%specific_opts);
@@ -124,9 +129,10 @@ sub shared_library {
 
     my @objects = $clone->_objects($srcs);
 
+    my $ld = $clone->_ld(@$srcs);
     $Module::Install::ForC::postamble .= <<"...";
 $target: @objects Makefile
-	$clone->{LD} $clone->{LDDLFLAGS} @{[ $clone->_libpath ]} @{[ $clone->_libs ]} $clone->{LDFLAGS} -o $target @objects
+	$ld $clone->{LDDLFLAGS} @{[ $clone->_libpath ]} @{[ $clone->_libs ]} $clone->{LDFLAGS} -o $target @objects
 
 ...
     $clone->_compile_objects($srcs, \@objects, $self->{CCCDLFLAGS});
