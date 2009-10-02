@@ -10,4 +10,5 @@ nytprof.out
 */*/*.o
 */*/*.dylib
 */*/test
-xt/010_simple/hello b/xt/010_simple/hello
+*/*/*.a
+xt/010_simple/hello
