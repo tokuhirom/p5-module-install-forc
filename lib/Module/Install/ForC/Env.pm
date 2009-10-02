@@ -55,12 +55,12 @@ sub _objects {
     map { my $x = $_; $x =~ s/\.c$/$Config{obj_ext}/; $x } @$srcs;
 }
 
-sub libs {
+sub _libs {
     my $self = shift;
     return map { "-l$_" } @{$self->{LIBS}};
 }
 
-sub libpath {
+sub _libpath {
     my $self = shift;
     return join ' ', map { "-L$_" } @{$self->{LIBPATH}};
 }
@@ -77,7 +77,7 @@ sub program {
 
     $Module::Install::ForC::postamble .= <<"...";
 $bin: @objects
-	$opts{LD} @{[ $cloned->libpath ]} @{[ $cloned->libs ]} $opts{LDFLAGS} -o $bin @objects 
+	$opts{LD} @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]} $opts{LDFLAGS} -o $bin @objects 
 
 ...
 
@@ -110,7 +110,7 @@ sub shared_library {
 
     $Module::Install::ForC::postamble .= <<"...";
 $target: @objects Makefile
-	$clone->{LD} $clone->{LDDLFLAGS} @{[ $clone->libpath ]} @{[ $clone->libs ]} $clone->{LDFLAGS} -o $target @objects
+	$clone->{LD} $clone->{LDDLFLAGS} @{[ $clone->_libpath ]} @{[ $clone->_libs ]} $clone->{LDFLAGS} -o $target @objects
 
 ...
     $clone->_compile_objects($srcs, \@objects, $self->{CCCDLFLAGS});
