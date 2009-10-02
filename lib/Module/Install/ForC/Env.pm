@@ -8,6 +8,7 @@ sub new {
     my $class = shift;
     my $opt = {
         CC        => $Config{cc},
+        CXX       => 'g++',
         LD        => $Config{ld},
         LDFLAGS   => $Config{ldflags},
         OPTIMIZE  => $Config{optimize},
@@ -23,6 +24,8 @@ sub new {
         SHLIBSUFFIX  => '.'.$Config{so}, 
         RANLIB     => 'ranlib',
         PROGSUFFIX => ($Config{exe_ext} ? ('.'.$Config{exe_ext}) : ''),
+        CXXFILESUFFIX => ['.c++', '.cc', '.cpp', '.cxx', ($^O ne 'Win32' ? ('.C') : ())],
+        CFILESUFFIX   => ['.c', ($^O eq 'Win32' ? ('.C') : ())],
         AR         => $Config{ar},
         @_
     };
@@ -48,8 +51,17 @@ sub append {
 }
 
 sub _objects {
-    my $srcs = shift;
-    map { my $x = $_; $x =~ s/\.c$/$Config{obj_ext}/; $x } @$srcs;
+    my ($self, $srcs) = @_;
+    my @objects;
+    my $regex = join('|', map { quotemeta($_) } @{$self->{CXXFILESUFFIX}}, @{$self->{CFILESUFFIX}});
+    for my $src (@$srcs) {
+        if ((my $obj = $src) =~ s/$regex/$Config{obj_ext}/) {
+            push @objects, $obj;
+        } else {
+            die "unknown src file type: $src";
+        }
+    }
+    @objects;
 }
 
 sub _libs {
@@ -69,15 +81,23 @@ sub program {
     my $target = "$bin" . $cloned->{PROGSUFFIX};
     push @Module::Install::ForC::targets, $target;
 
-    my @objects = _objects($srcs);
+    my @objects = $cloned->_objects($srcs);
+
+    my $opt = scalar(grep { $cloned->_is_cpp($_) } @$srcs) > 0 ? '-lstdc++' : '';
 
     $Module::Install::ForC::postamble .= <<"...";
 $target: @objects
-	$cloned->{LD} $cloned->{LDFLAGS} -o $target @objects @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]}
+	$cloned->{LD} $opt $cloned->{LDFLAGS} -o $target @objects @{[ $cloned->_libpath ]} @{[ $cloned->_libs ]}
 
 ...
 
     $cloned->_compile_objects($srcs, \@objects, '');
+}
+
+sub _is_cpp {
+    my ($self, $src) = @_;
+    my $pattern = join('|', map { quotemeta($_) } @{$self->{CXXFILESUFFIX}});
+    $src =~ qr/$pattern$/ ? 1 : 0;
 }
 
 sub _compile_objects {
@@ -85,9 +105,10 @@ sub _compile_objects {
     my @cppopts = map { "-I $_" } @{ $self->{CPPPATH} };
     for my $i (0..@$srcs-1) {
         next if $Module::Install::ForC::OBJECTS{$objects->[$i]}++ != 0;
+        my $compiler = $self->_is_cpp($srcs->[$i]) ? $self->{CXX} : $self->{CC};
         $Module::Install::ForC::postamble .= <<"...";
 $objects->[$i]: $srcs->[$i] Makefile
-	$self->{CC} $opt $self->{CCFLAGS} @cppopts -c -o $objects->[$i] $srcs->[$i]
+	$compiler $opt $self->{CCFLAGS} @cppopts -c -o $objects->[$i] $srcs->[$i]
 
 ...
     }
@@ -101,7 +122,7 @@ sub shared_library {
 
     push @Module::Install::ForC::targets, $target;
 
-    my @objects = _objects($srcs);
+    my @objects = $clone->_objects($srcs);
 
     $Module::Install::ForC::postamble .= <<"...";
 $target: @objects Makefile
@@ -119,7 +140,7 @@ sub static_library {
 
     push @Module::Install::ForC::targets, $target;
 
-    my @objects = _objects($srcs);
+    my @objects = $clone->_objects($srcs);
 
     $Module::Install::ForC::postamble .= <<"...";
 $target: @objects Makefile

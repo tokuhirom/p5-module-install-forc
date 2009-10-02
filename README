@@ -54,6 +54,10 @@ FAQ
 
             checklib lib => 'jpeg', header => 'jpeglib.h';
 
+    What's supported platforms?
+        Currently GNU/Linux, and other POSIX systems, and OSX. (mattn-san
+        add the win32 support soon :P)
+
 AUTHOR
     Tokuhiro Matsuno <tokuhirom slkjfd gmail.com>
 
