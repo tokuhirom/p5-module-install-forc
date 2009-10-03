@@ -16,6 +16,7 @@ our @TESTS;
 
 sub env_for_c {
     my $self = shift;
+    $self->admin->copy_package('Module::Install::ForC::Env');
     Module::Install::ForC::Env->new(@_)
 }
 sub is_linux () { $^O eq 'linux'  }
@@ -24,7 +25,6 @@ sub WriteMakefileForC {
     my $self = shift;
 
     $self->requires_external_cc();
-    $self->admin->copy_package('Module::Install::ForC::Env');
 
     open my $fh, '>', 'Makefile' or die "cannot open file: $!";
     print $fh <<"...";

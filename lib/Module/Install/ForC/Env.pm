@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Storable ();
 use Config;
+use File::Temp;
 
 sub new {
     my $class = shift;
@@ -11,6 +12,7 @@ sub new {
     my %platformvars = do {
         my %unix = (
             CC            => 'gcc',
+            CPP           => 'cpp',
             CXX           => 'g++',
             LIBPREFIX     => 'lib',
             LIBSUFFIX     => '.a',
@@ -62,6 +64,24 @@ sub new {
     }
 
     return $self;
+}
+
+use POSIX;
+sub _try_cc {
+    my ($self, $src) = @_;
+    my ( $ch, $cfile ) = File::Temp::tempfile(
+        'assertlibXXXXXXXX',
+        SUFFIX => '.c'
+        UNLINK => 1,
+    );
+    print $ch $src;
+    my $exit_status = system "$self->{CC} @{[ $self->_cpppath ]} @{ $self->{CCFLAGS} } $cfile";
+    WIFEXITED($exit_status) && WEXITSTATUS($exit_status) == 0 ? 1 : 0;
+}
+
+sub have_header {
+    my ($self, $header,) = @_;
+    $self->_try_cc("#include <$header>\nint main() { return 0; }");
 }
 
 sub clone {
@@ -136,17 +156,21 @@ sub _push_postamble {
     $Module::Install::ForC::postamble .= $_[1];
 }
 
+sub _cpppath {
+    my $self = shift;
+    join ' ', map { "-I $_" } @{ $self->{CPPPATH} };
+}
+
 sub _compile_objects {
     my ($self, $srcs, $objects, $opt) = @_;
     $opt ||= '';
 
-    my @cppopts = map { "-I $_" } @{ $self->{CPPPATH} };
     for my $i (0..@$srcs-1) {
         next if $Module::Install::ForC::OBJECTS{$objects->[$i]}++ != 0;
         my $compiler = $self->_is_cpp($srcs->[$i]) ? $self->{CXX} : $self->{CC};
         $self->_push_postamble(<<"...");
 $objects->[$i]: $srcs->[$i] Makefile
-	$compiler $opt @{ $self->{CCFLAGS} } @cppopts -c -o $objects->[$i] $srcs->[$i]
+	$compiler $opt @{ $self->{CCFLAGS} } @{[ $self->_cpppath ]} -c -o $objects->[$i] $srcs->[$i]
 
 ...
     }
