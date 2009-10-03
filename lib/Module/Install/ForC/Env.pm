@@ -4,6 +4,7 @@ use warnings;
 use Storable ();
 use Config;
 use File::Temp;
+use POSIX;
 
 sub new {
     my $class = shift;
@@ -66,8 +67,7 @@ sub new {
     return $self;
 }
 
-use POSIX;
-sub _try_cc {
+sub try_cc {
     my ($self, $src) = @_;
     my ( $ch, $cfile ) = File::Temp::tempfile(
         'assertlibXXXXXXXX',
@@ -81,7 +81,12 @@ sub _try_cc {
 
 sub have_header {
     my ($self, $header,) = @_;
-    $self->_try_cc("#include <$header>\nint main() { return 0; }");
+    $self->try_cc("#include <$header>\nint main() { return 0; }");
+}
+
+sub require_header {
+    my ($self, $header,) = @_;
+    $self->have_header($header) or die "Missing required header: '$header'";
 }
 
 sub clone {

@@ -11,7 +11,7 @@ require inc::Module::Install;
 inc::Module::Install->import();
 
 my $env = env_for_c();
-ok $env->_try_cc('int main () { }');
+ok $env->try_cc('int main () { }');
 ok $env->have_header('stdio.h');
 ok !$env->have_header('unknown-header.h');
 
