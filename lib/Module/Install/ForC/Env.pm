@@ -6,6 +6,8 @@ use Config;
 use File::Temp;
 use POSIX;
 
+sub DEBUG () { $ENV{DEBUG} }
+
 sub new {
     my $class = shift;
 
@@ -71,17 +73,68 @@ sub try_cc {
     my ($self, $src) = @_;
     my ( $ch, $cfile ) = File::Temp::tempfile(
         'assertlibXXXXXXXX',
-        SUFFIX => '.c'
+        SUFFIX => '.c',
         UNLINK => 1,
     );
     print $ch $src;
-    my $exit_status = system "$self->{CC} @{[ $self->_cpppath ]} @{ $self->{CCFLAGS} } $cfile";
+    my $cmd = "$self->{CC} @{[ $self->_libs ]} @{[ $self->_cpppath ]} @{ $self->{CCFLAGS} } $cfile";
+    print "$cmd\n" if DEBUG;
+    my $exit_status = _quiet_system($cmd);
     WIFEXITED($exit_status) && WEXITSTATUS($exit_status) == 0 ? 1 : 0;
 }
 
+# code substantially borrowed from IPC::Run3                                                                                          
+sub _quiet_system {
+    my (@cmd) = @_;
+
+    # save handles
+    local *STDOUT_SAVE;
+    local *STDERR_SAVE;
+    open STDOUT_SAVE, ">&STDOUT" or die "CheckLib: $! saving STDOUT";
+    open STDERR_SAVE, ">&STDERR" or die "CheckLib: $! saving STDERR";
+
+    # redirect to nowhere
+    local *DEV_NULL;
+    open DEV_NULL, ">" . File::Spec->devnull
+      or die "CheckLib: $! opening handle to null device";
+    open STDOUT, ">&" . fileno DEV_NULL
+      or die "CheckLib: $! redirecting STDOUT to null handle";
+    open STDERR, ">&" . fileno DEV_NULL
+      or die "CheckLib: $! redirecting STDERR to null handle";
+
+    # run system command
+    my $rv = system(@cmd);
+
+    # restore handles
+    open STDOUT, ">&" . fileno STDOUT_SAVE
+      or die "CheckLib: $! restoring STDOUT handle";
+    open STDERR, ">&" . fileno STDERR_SAVE
+      or die "CheckLib: $! restoring STDERR handle";
+
+    return $rv;
+}
+
+
 sub have_header {
     my ($self, $header,) = @_;
-    $self->try_cc("#include <$header>\nint main() { return 0; }");
+    _checking_for(
+        "C header $header",
+        $self->try_cc("#include <$header>\nint main() { return 0; }")
+    );
+}
+
+sub _checking_for {
+    my ($msg, $result) = @_;
+    print "Checking for $msg ... @{[ $result ? 'yes' : 'no' ]}\n";
+    return $result;
+}
+
+sub have_library {
+    my ($self, $library,) = @_;
+    _checking_for(
+        "C library $library",
+        $self->clone()->append( 'LIBS' => $library )->try_cc("int main(){return 0;}")
+    );
 }
 
 sub require_header {
@@ -98,6 +151,7 @@ sub append {
     my $self = shift;
     while (my ($key, $val) = splice(@_, 0, 2)) {
         if ((ref($self->{$key})||'') eq 'ARRAY') {
+            $val = [$val] unless ref $val;
             push @{ $self->{$key} }, @{$val};
         } else {
             $self->{$key} = $val;
