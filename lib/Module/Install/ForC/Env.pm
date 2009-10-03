@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Storable ();
 use Config;
-use File::Temp;
+use File::Temp ();
 use POSIX;
 
 sub DEBUG () { $ENV{DEBUG} }
