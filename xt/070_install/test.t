@@ -6,14 +6,16 @@ use Config;
 use FindBin;
 
 chdir(dirname(__FILE__));
-for (qw(./local/bin/hello/ Makefile)) {
+for (qw(./local/bin/hello Makefile), <./local/lib/*>, <./local/bin/*>) {
     unlink $_ if -e $_;
 }
 
 mkdir './local/' unless -d './local/';
 mkdir './local/bin/' unless -d './local/bin/';
+mkdir './local/lib/' unless -d './local/lib/';
 
-ok !-e './local/bin/hello';
+is scalar(<./local/bin/*>), undef;
+is scalar(<./local/lib/*>), undef;
 
 {
     unshift @INC, '../../lib';
@@ -21,12 +23,15 @@ ok !-e './local/bin/hello';
     inc::Module::Install->import();
 
     my $env = env_for_c(PREFIX => './local/');
-    $env->program('hello', 'hello.c');
-    $env->install_bin('hello');
+    $env->install_bin($env->program('hello', 'hello.c'));
+    $env->install_lib($env->shared_library('hello', 'hello.c'));
+
     WriteMakefileForC();
 }
 `make install`;
+# `make clean`;
 
-ok -e './local/bin/hello';
+isnt scalar(<./local/bin/*>), undef;
+isnt scalar(<./local/lib/*>), undef;
 
 done_testing;

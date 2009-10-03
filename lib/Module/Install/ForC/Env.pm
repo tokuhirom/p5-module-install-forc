@@ -76,8 +76,16 @@ sub new {
 
 sub install_bin {
     my ($self, $bin) = @_;
-    my $dst = File::Spec->catfile($self->{PREFIX}, 'bin');
-    push @Module::Install::ForC::INSTALL_BIN, "$self->{INSTALL} $bin $dst";
+    $self->install($bin, 'bin');
+}
+sub install_lib {
+    my ($self, $lib) = @_;
+    $self->install($lib, 'lib');
+}
+sub install {
+    my ($self, $target, $suffix) = @_;
+    my $dst = File::Spec->catfile($self->{PREFIX}, $suffix);
+    push @{$Module::Install::ForC::INSTALL{$suffix}}, "$self->{INSTALL} $target $dst";
 }
 
 sub try_cc {
@@ -215,6 +223,8 @@ $target: @objects
 ...
 
     $clone->_compile_objects($srcs, \@objects, '');
+
+    return $target;
 }
 
 sub _is_cpp {
@@ -275,6 +285,8 @@ $target: @objects Makefile
 
 ...
     $clone->_compile_objects($srcs, \@objects, @{$self->{CCCDLFLAGS}});
+
+    return $target;
 }
 
 sub static_library {
@@ -295,6 +307,8 @@ $target: @objects Makefile
 
 ...
     $clone->_compile_objects($srcs, \@objects, @{$self->{CCCDLFLAGS}});
+
+    return $target;
 }
 
 sub have_type {

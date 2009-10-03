@@ -13,7 +13,7 @@ our @targets;
 our %OBJECTS;
 our $postamble;
 our @TESTS;
-our @INSTALL_BIN;
+our %INSTALL;
 
 sub env_for_c {
     my $self = shift;
@@ -38,8 +38,8 @@ clean:
 	\$(RM) Makefile
 	$Config{rm_try}
 
-install:
-	@{[ join("\t", @Module::Install::ForC::INSTALL_BIN) ]}
+install: all
+	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
 
 $Module::Install::ForC::postamble
 ...
