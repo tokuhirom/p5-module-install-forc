@@ -20,4 +20,7 @@ ok !$env->have_header('unknown-header.h');
 ok $env->have_library('m');
 ok !$env->have_library('unknown-library');
 
+ok $env->have_type('pid_t', "#include <sys/types.h>\n") if $^O eq 'darwin' || $^O eq 'linux';
+ok !$env->have_type('unkonwn_type_t');
+
 done_testing;

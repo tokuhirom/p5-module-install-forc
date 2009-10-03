@@ -283,6 +283,21 @@ $target: @objects Makefile
     $clone->_compile_objects($srcs, \@objects, @{$self->{CCCDLFLAGS}});
 }
 
+sub have_type {
+    my ($self, $type, $src) = @_;
+    $src ||= '';
+
+    $self->try_cc(<<"...");
+$src
+
+int main() {
+    if ( ( $type * ) 0 ) return 0;
+    if ( sizeof($type) ) return 0;
+    return 0;
+}
+...
+}
+
 1;
 __END__
 
