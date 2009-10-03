@@ -14,20 +14,25 @@ sub new {
     # platform specific vars
     my %platformvars = do {
         my %unix = (
-            CC            => 'gcc',
-            CPP           => 'cpp',
-            CXX           => 'g++',
+            CC  => $ENV{CC}  || 'gcc',
+            CPP => $ENV{CPP} || 'cpp',
+            CXX => $ENV{CXX} || 'g++',
+            PREFIX        => '/usr/',
             LIBPREFIX     => 'lib',
             LIBSUFFIX     => '.a',
             SHLIBPREFIX   => 'lib',
             LDMODULEFLAGS => ['-shared'],
+            INSTALL       => 'install',
         );
         my %win32 = (
-            CC          => 'gcc',
-            CXX         => 'g++',
+            CC  => $ENV{CC}  || 'gcc',
+            CPP => $ENV{CPP} || 'cpp',
+            CXX => $ENV{CXX} || 'g++',
+            PREFIX      => 'C:\\',
             LIBPREFIX   => '',
             LIBSUFFIX   => '.lib',
             SHLIBPREFIX => '',
+            INSTALL       => 'copy',
         );
         my %darwin = ( LDMODULEFLAGS => ['-dynamiclib'], );
 
@@ -67,6 +72,12 @@ sub new {
     }
 
     return $self;
+}
+
+sub install_bin {
+    my ($self, $bin) = @_;
+    my $dst = File::Spec->catfile($self->{PREFIX}, 'bin');
+    push @Module::Install::ForC::INSTALL_BIN, "$self->{INSTALL} $bin $dst";
 }
 
 sub try_cc {
@@ -186,6 +197,7 @@ sub _libpath {
 
 sub program {
     my ($self, $bin, $srcs, %specific_opts) = @_;
+    $srcs = [$srcs] unless ref $srcs;
     my $clone = $self->clone()->append(%specific_opts);
 
     my $target = "$bin" . $clone->{PROGSUFFIX};
@@ -247,6 +259,7 @@ sub _push_target {
 
 sub shared_library {
     my ($self, $lib, $srcs, %specific_opts) = @_;
+    $srcs = [$srcs] unless ref $srcs;
     my $clone = $self->clone->append(%specific_opts);
 
     my $target = "$clone->{SHLIBPREFIX}$lib$clone->{SHLIBSUFFIX}";
@@ -266,6 +279,7 @@ $target: @objects Makefile
 
 sub static_library {
     my ($self, $lib, $srcs, %specific_opts) = @_;
+    $srcs = [$srcs] unless ref $srcs;
     my $clone = $self->clone->append(%specific_opts);
 
     my $target = "$clone->{LIBPREFIX}$lib$clone->{LIBSUFFIX}";

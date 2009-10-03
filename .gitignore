@@ -2,7 +2,6 @@ cover_db
 META.yml
 Makefile
 blib
-inc
 pm_to_blib
 MANIFEST
 Makefile.old
@@ -14,3 +13,6 @@ nytprof.out
 xt/010_simple/hello
 */*/main
 */*/a.out
+inc
+xt/070_install/hello
+xt/070_install/local/

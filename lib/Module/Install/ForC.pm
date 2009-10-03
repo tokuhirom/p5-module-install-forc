@@ -13,6 +13,7 @@ our @targets;
 our %OBJECTS;
 our $postamble;
 our @TESTS;
+our @INSTALL_BIN;
 
 sub env_for_c {
     my $self = shift;
@@ -23,8 +24,6 @@ sub is_linux () { $^O eq 'linux'  }
 sub is_mac   () { $^O eq 'darwin' }
 sub WriteMakefileForC {
     my $self = shift;
-
-    $self->requires_external_cc();
 
     open my $fh, '>', 'Makefile' or die "cannot open file: $!";
     print $fh <<"...";
@@ -38,6 +37,9 @@ clean:
 	\$(RM) @Module::Install::ForC::targets @{[ keys %Module::Install::ForC::OBJECTS ]}
 	\$(RM) Makefile
 	$Config{rm_try}
+
+install:
+	@{[ join("\t", @Module::Install::ForC::INSTALL_BIN) ]}
 
 $Module::Install::ForC::postamble
 ...
