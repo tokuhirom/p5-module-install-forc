@@ -189,7 +189,7 @@ sub program {
     my $clone = $self->clone()->append(%specific_opts);
 
     my $target = "$bin" . $clone->{PROGSUFFIX};
-    push @Module::Install::ForC::targets, $target;
+    _push_target($target);
     push @Module::Install::ForC::TESTS, $target if $target =~ m{^t/};
 
     my @objects = $clone->_objects($srcs);
@@ -240,13 +240,18 @@ sub _ld {
     (scalar(grep { $self->_is_cpp($_) } @srcs) > 0) ? $self->{CXX} : $self->{LD};
 }
 
+sub _push_target {
+    my $target = shift;
+    push @Module::Install::ForC::targets, $target;
+}
+
 sub shared_library {
     my ($self, $lib, $srcs, %specific_opts) = @_;
     my $clone = $self->clone->append(%specific_opts);
 
     my $target = "$clone->{SHLIBPREFIX}$lib$clone->{SHLIBSUFFIX}";
 
-    push @Module::Install::ForC::targets, $target;
+    _push_target($target);
 
     my @objects = $clone->_objects($srcs);
 
@@ -265,7 +270,7 @@ sub static_library {
 
     my $target = "$clone->{LIBPREFIX}$lib$clone->{LIBSUFFIX}";
 
-    push @Module::Install::ForC::targets, $target;
+    _push_target($target);
 
     my @objects = $clone->_objects($srcs);
 

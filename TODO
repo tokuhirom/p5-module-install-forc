@@ -3,7 +3,6 @@ AC_FUNC_CLOSEDIR_VOID
 
 make dist
 
-support have_library()
 support dependencies of headers
 support install things
 

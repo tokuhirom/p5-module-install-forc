@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use File::Basename;
 use Config;
+use FindBin;
 
 chdir(dirname(__FILE__));
 
