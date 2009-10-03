@@ -6,31 +6,62 @@ use Config;
 
 sub new {
     my $class = shift;
+
+    # platform specific vars
+    my %platformvars = do {
+        my %unix = (
+            CC            => 'gcc',
+            CXX           => 'g++',
+            LIBPREFIX     => 'lib',
+            LIBSUFFIX     => '.a',
+            SHLIBPREFIX   => 'lib',
+            LDMODULEFLAGS => ['-shared'],
+        );
+        my %win32 = (
+            CC          => 'gcc',
+            CXX         => 'g++',
+            LIBPREFIX   => '',
+            LIBSUFFIX   => '.lib',
+            SHLIBPREFIX => '',
+        );
+        my %darwin = ( LDMODULEFLAGS => ['-dynamiclib'], );
+
+          $^O eq 'MSWin32' ? %win32
+        : $^O eq 'darwin'  ? (%unix, %darwin)
+        : %unix;
+    };
     my $opt = {
-        CC        => $Config{cc},
-        CXX       => 'g++',
-        LD        => $Config{ld},
-        LDFLAGS   => $Config{ldflags},
-        OPTIMIZE  => $Config{optimize},
-        CCFLAGS   => $Config{ccflags},
-        LDDLFLAGS => ($^O eq 'darwin' ? ' -dynamiclib' : $Config{lddlflags}),
-        CPPPATH   => [],
-        LIBS      => [],
-        LIBPATH   => [],
-        CCCDLFLAGS => $Config{cccdlflags},
-        LIBPREFIX  => ( $^O eq 'Win32' ? '' : 'lib'),
-        LIBSUFFIX  => ($^O eq 'Win32' ? '.lib' : '.a'),
-        SHLIBPREFIX  => ( $^O eq 'Win32' ? '' : 'lib'),
-        SHLIBSUFFIX  => '.'.$Config{so}, 
-        RANLIB     => 'ranlib',
-        PROGSUFFIX => ($Config{exe_ext} ? ('.'.$Config{exe_ext}) : ''),
-        CXXFILESUFFIX => ['.c++', '.cc', '.cpp', '.cxx', ($^O ne 'Win32' ? ('.C') : ())],
-        CFILESUFFIX   => ['.c', ($^O eq 'Win32' ? ('.C') : ())],
-        AR         => $Config{ar},
+        LD            => $Config{ld},
+        LDFLAGS       => '',
+        CCFLAGS       => [],
+        CPPPATH       => [],
+        LIBS          => [],
+        LIBPATH       => [],
+        CCCDLFLAGS    => [], # TODO: rename
+        SHLIBSUFFIX   => '.' . $Config{so},
+        RANLIB        => 'ranlib',
+        PROGSUFFIX    => ( $Config{exe_ext} ? ( '.' . $Config{exe_ext} ) : '' ),
+        CXXFILESUFFIX => [ '.c++', '.cc', '.cpp', '.cxx' ],
+        CFILESUFFIX   => ['.c'],
+        AR            => $Config{ar},
+        %platformvars,
         @_
     };
-    $opt->{CPPPATH} = [$opt->{CPPPATH}] unless ref $opt->{CPPPATH};
-    bless $opt, $class;
+    for my $key (qw/CPPPATH LIBS CLIBPATH LDMODULEFLAGS CCFLAGS/) {
+        $opt->{$key} = [$opt->{$key}] unless ref $opt->{$key};
+    }
+    my $self = bless $opt, $class;
+
+    # fucking '.C' extension support.
+    if ($^O eq 'Win32' || $^O eq 'darwin') {
+        # case sensitive fs.Yes, I know the darwin supports case-sensitive fs.
+        # But, also supports case-insensitive one :)
+        push @{$self->{CFILESUFFIX}}, '.C';
+    } else {
+        push @{$self->{CXXFILESUFFIX}}, '.C';
+    }
+
+    return $self;
 }
 
 sub clone {
@@ -86,7 +117,7 @@ sub program {
 
     my $ld = $clone->_ld(@$srcs);
 
-    $Module::Install::ForC::postamble .= <<"...";
+    $self->_push_postamble(<<"...");
 $target: @objects
 	$ld $clone->{LDFLAGS} -o $target @objects @{[ $clone->_libpath ]} @{[ $clone->_libs ]}
 
@@ -101,15 +132,21 @@ sub _is_cpp {
     $src =~ qr/$pattern$/ ? 1 : 0;
 }
 
+sub _push_postamble {
+    $Module::Install::ForC::postamble .= $_[1];
+}
+
 sub _compile_objects {
     my ($self, $srcs, $objects, $opt) = @_;
+    $opt ||= '';
+
     my @cppopts = map { "-I $_" } @{ $self->{CPPPATH} };
     for my $i (0..@$srcs-1) {
         next if $Module::Install::ForC::OBJECTS{$objects->[$i]}++ != 0;
         my $compiler = $self->_is_cpp($srcs->[$i]) ? $self->{CXX} : $self->{CC};
-        $Module::Install::ForC::postamble .= <<"...";
+        $self->_push_postamble(<<"...");
 $objects->[$i]: $srcs->[$i] Makefile
-	$compiler $opt $self->{CCFLAGS} @cppopts -c -o $objects->[$i] $srcs->[$i]
+	$compiler $opt @{ $self->{CCFLAGS} } @cppopts -c -o $objects->[$i] $srcs->[$i]
 
 ...
     }
@@ -131,12 +168,12 @@ sub shared_library {
     my @objects = $clone->_objects($srcs);
 
     my $ld = $clone->_ld(@$srcs);
-    $Module::Install::ForC::postamble .= <<"...";
+    $self->_push_postamble(<<"...");
 $target: @objects Makefile
-	$ld $clone->{LDDLFLAGS} @{[ $clone->_libpath ]} @{[ $clone->_libs ]} $clone->{LDFLAGS} -o $target @objects
+	$ld @{ $clone->{LDMODULEFLAGS} } @{[ $clone->_libpath ]} @{[ $clone->_libs ]} $clone->{LDFLAGS} -o $target @objects
 
 ...
-    $clone->_compile_objects($srcs, \@objects, $self->{CCCDLFLAGS});
+    $clone->_compile_objects($srcs, \@objects, @{$self->{CCCDLFLAGS}});
 }
 
 sub static_library {
@@ -149,13 +186,13 @@ sub static_library {
 
     my @objects = $clone->_objects($srcs);
 
-    $Module::Install::ForC::postamble .= <<"...";
+    $self->_push_postamble(<<"...");
 $target: @objects Makefile
 	$clone->{AR} rc $target @objects
 	$clone->{RANLIB} $target
 
 ...
-    $clone->_compile_objects($srcs, \@objects, $self->{CCCDLFLAGS});
+    $clone->_compile_objects($srcs, \@objects, @{$self->{CCCDLFLAGS}});
 }
 
 1;
@@ -183,7 +220,6 @@ The default value is following:
         CC       => $Config{cc},
         LD       => $Config{ld},
         LDFLAGS  => $Config{ldflags},
-        OPTIMIZE => $Config{optimize},
         CCFLAGS  => $Config{ccflags},
         LIBS     => [],
 
