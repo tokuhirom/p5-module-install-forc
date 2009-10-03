@@ -13,5 +13,7 @@ system $^X,  '-I../../lib/', 'Makefile.PL';
 ok -e 'Makefile';
 system $Config{make};
 is `./hello`, 'Hello, world!';
+`make clean`;
+ok !-e'hello.o';
 
 done_testing;

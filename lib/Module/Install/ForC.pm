@@ -28,14 +28,15 @@ sub WriteMakefileForC {
 
     open my $fh, '>', 'Makefile' or die "cannot open file: $!";
     print $fh <<"...";
+RM=$Config{rm}
 all: @Module::Install::ForC::targets
 
 test: @TESTS
 	prove --exec "/bin/sh -c " @TESTS
 
 clean:
-	rm @Module::Install::ForC::targets @{[ keys %Module::Install::ForC::OBJECTS ]}
-	rm Makefile
+	\$(RM) @Module::Install::ForC::targets @{[ keys %Module::Install::ForC::OBJECTS ]}
+	\$(RM) Makefile
 	$Config{rm_try}
 
 $Module::Install::ForC::postamble
