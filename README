@@ -33,6 +33,9 @@ DESCRIPTION
     M::I power for C/C++ programs!You can use this module as replacement of
     autoconf/automake for easy case.
 
+NOTE
+    This is a early bate release! API will change later.
+
 FUNCTIONS
     is_linux()
     is_mac()

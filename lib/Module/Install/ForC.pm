@@ -134,6 +134,10 @@ This module provides some useful functions for writing C/C++ programs/libraries,
 
 M::Install is useful for Perl/XS programming, but this module provides M::I power for C/C++ programs!You can use this module as replacement of autoconf/automake for easy case.
 
+=head1 NOTE
+
+This is a early bate release! API will change later.
+
 =head1 FUNCTIONS
 
 =over 4
