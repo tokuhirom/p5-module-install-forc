@@ -287,7 +287,7 @@ sub _ld {
 
 sub _push_target {
     my $target = shift;
-    push @Module::Install::ForC::targets, $target;
+    push @Module::Install::ForC::TARGETS, $target;
 }
 
 sub shared_library {

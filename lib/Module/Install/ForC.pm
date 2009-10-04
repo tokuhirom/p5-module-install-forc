@@ -9,7 +9,7 @@ use Config;
 use Module::Install::Base;
 our @ISA     = qw(Module::Install::Base);
 
-our @targets;
+our @TARGETS;
 our %OBJECTS;
 our $postamble;
 our @TESTS;
@@ -56,7 +56,7 @@ DIST_DEFAULT = tardist
 DIST_CP = best
 PERLRUN = \$(PERL)
 
-all: @Module::Install::ForC::targets
+all: @Module::Install::ForC::TARGETS
 
 test: @TESTS
 	prove --exec "/bin/sh -c " @TESTS
@@ -80,7 +80,7 @@ distdir:
         -e "manicopy(maniread(),'\$(DISTVNAME)', '\$(DIST_CP)');"
 
 clean:
-	\$(RM) @Module::Install::ForC::targets @{[ keys %Module::Install::ForC::OBJECTS ]}
+	\$(RM) @Module::Install::ForC::TARGETS @{[ keys %Module::Install::ForC::OBJECTS ]}
 	\$(RM) Makefile
 	$Config{rm_try}
 
