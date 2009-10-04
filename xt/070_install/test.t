@@ -29,7 +29,7 @@ is scalar(<./local/lib/*>), undef;
     WriteMakefileForC();
 }
 `make install`;
-# `make clean`;
+`make clean`;
 
 isnt scalar(<./local/bin/*>), undef;
 isnt scalar(<./local/lib/*>), undef;
