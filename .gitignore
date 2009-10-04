@@ -26,3 +26,4 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 inc/Test/More.pm
+xt/090_dist/test-0.01.tar.gz
