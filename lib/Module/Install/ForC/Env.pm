@@ -79,7 +79,6 @@ sub new {
 sub parse_config {
     my ($self, $str) = @_;
     my @words = Text::ParseWords::shellwords($str);
-    my %opt = ('I' => 'CPPPATH', 'L' => 'LIBPATH', 'l' => 'LIBS');
     for (my $i=0; $i<@words; $i++) {
         local $_ = $words[$i];
         s/^-I// and do {
