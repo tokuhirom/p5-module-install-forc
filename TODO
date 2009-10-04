@@ -4,7 +4,6 @@ AC_FUNC_CLOSEDIR_VOID
 make dist
 
 support dependencies of headers
-support install things
 support pkg-config
     see http://docs.python.org/library/shlex.html
     Getopt::Long::Parser?(pointed by charsbar++)

@@ -5,6 +5,7 @@ use Storable ();
 use Config;
 use File::Temp ();
 use POSIX;
+use Text::ParseWords qw/quotewords/;
 
 sub DEBUG () { $ENV{DEBUG} }
 
@@ -72,6 +73,28 @@ sub new {
     }
 
     return $self;
+}
+
+# pkg-config
+sub parse_config {
+    my ($self, $str) = @_;
+    my @words = Text::ParseWords::shellwords($str);
+    my %opt = ('I' => 'CPPPATH', 'L' => 'LIBPATH', 'l' => 'LIBS');
+    for (my $i=0; $i<@words; $i++) {
+        local $_ = $words[$i];
+        s/^-I// and do {
+            $self->append('CPPPATH' => $_ || $words[++$i]);
+            next;
+        };
+        s/^-L// and do {
+            $self->append('LIBPATH' => $_ || $words[++$i]);
+            next;
+        };
+        s/^-l// and do {
+            $self->append('LIBS' => $_ || $words[++$i]);
+            next;
+        };
+    }
 }
 
 sub install_bin {
