@@ -3,3 +3,4 @@ AC_FUNC_CLOSEDIR_VOID
 
 support dependencies of headers
 --prefix
+refactoring the tests

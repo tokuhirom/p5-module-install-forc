@@ -5,7 +5,7 @@ use Storable ();
 use Config;
 use File::Temp ();
 use POSIX;
-use Text::ParseWords qw/quotewords/;
+use Text::ParseWords ();
 
 sub DEBUG () { $ENV{DEBUG} }
 
@@ -18,7 +18,7 @@ sub new {
             CC  => $ENV{CC}  || 'gcc',
             CPP => $ENV{CPP} || 'cpp',
             CXX => $ENV{CXX} || 'g++',
-            PREFIX        => '/usr/',
+            PREFIX        => $ENV{PREFIX} || '/usr/',
             LIBPREFIX     => 'lib',
             LIBSUFFIX     => '.a',
             SHLIBPREFIX   => 'lib',
@@ -41,6 +41,7 @@ sub new {
         : $^O eq 'darwin'  ? (%unix, %darwin)
         : %unix;
     };
+
     my $opt = {
         LD            => $Config{ld},
         LDFLAGS       => '',
