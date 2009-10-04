@@ -10,12 +10,12 @@ nytprof.out
 */*/*.dylib
 */*/test
 */*/*.a
-xt/010_simple/hello
+t/010_simple/hello
 */*/main
 */*/a.out
-xt/070_install/hello
-xt/070_install/local/
-xt/*/inc/
+t/070_install/hello
+t/070_install/local/
+t/*/inc/
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -26,4 +26,4 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 inc/Test/More.pm
-xt/090_dist/test-0.01.tar.gz
+t/090_dist/test-0.01.tar.gz
