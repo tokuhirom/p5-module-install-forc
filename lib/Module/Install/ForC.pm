@@ -160,14 +160,6 @@ $env contains the build environment variables.The key name is a generic value fo
 
 =over 4
 
-=item How to check that a library is available.
-
-You can use Module::Install::CheckLib.
-
-    checklib lib => 'jpeg', header => 'jpeglib.h';
-
-=item What's supported platforms?
-
 Currently GNU/Linux, and other POSIX systems, and OSX.
 (mattn-san add the win32 support soon :P)
 

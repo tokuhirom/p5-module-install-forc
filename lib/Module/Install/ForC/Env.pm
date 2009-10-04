@@ -179,11 +179,6 @@ sub have_library {
     );
 }
 
-sub require_header {
-    my ($self, $header,) = @_;
-    $self->have_header($header) or die "Missing required header: '$header'";
-}
-
 sub clone {
     my ($self, ) = @_;
     return Storable::dclone($self);
@@ -394,6 +389,46 @@ make executable program named $binary from \@src.
 You can specify the environment variables for each program.
 
     $env->program('foo', ['foo.c'], LIBS => ['pthread']);
+
+=item $env->shared_library($lib, \@src, %opts)
+
+Make shared library named $lib from \@src.
+
+=item $env->static_library($lib, \@src, %opts)
+
+Make static library named $lib from \@src.
+
+=item $env->parse_config(`pkg-config x11 --cflags --libs`)
+
+Parse configuration and merge to $env from pkg-config.
+
+=item $env->install('hello.exe' => 'bin')
+
+Copy hello.exe to $prefix/bin/
+
+=item $env->install_bin('hello.exe')
+
+This is shorthand of $env->install('hello.exe' => 'bin').
+
+=item $env->install_lib('libhello.so')
+
+This is shorthand of $env->install('libhello.so' => 'lib').
+
+=item my $bool = $env->have_header('stdlib.h')
+
+Do you have a stdlib.h?
+
+=item my $bool = $env->have_library('tt')
+
+Do your have library?
+
+=item my $bool = $env->have_type('pid_t')
+
+Do your have the type?
+
+=item my $bool = $env->try_cc("int main() { }");
+
+Can you compile this?
 
 =back
 
