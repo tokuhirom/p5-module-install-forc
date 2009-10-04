@@ -32,7 +32,7 @@ is scalar(<./local/lib/*>), undef;
     WriteMakefileForC();
 }
 `make install`;
-`make clean`;
+`make clean` unless $ENV{DEBUG};
 
 isnt scalar(<./local/bin/*>), undef;
 isnt scalar(<./local/lib/*>), undef;
