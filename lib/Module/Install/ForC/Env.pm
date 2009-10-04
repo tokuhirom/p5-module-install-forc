@@ -257,7 +257,7 @@ sub _is_cpp {
 }
 
 sub _push_postamble {
-    $Module::Install::ForC::postamble .= $_[1];
+    $Module::Install::ForC::POSTAMBLE .= $_[1];
 }
 
 sub _cpppath {

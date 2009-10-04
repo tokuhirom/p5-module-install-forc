@@ -11,7 +11,7 @@ our @ISA     = qw(Module::Install::Base);
 
 our @TARGETS;
 our %OBJECTS;
-our $postamble;
+our $POSTAMBLE;
 our @TESTS;
 our %INSTALL;
 
@@ -90,7 +90,7 @@ install: all
 manifest:
 	$^X -MExtUtils::Manifest -e 'ExtUtils::Manifest::mkmanifest()'
 
-@{[ $Module::Install::ForC::postamble || '' ]}
+@{[ $Module::Install::ForC::POSTAMBLE || '' ]}
 ...
     $make;
 }
