@@ -1,4 +1,8 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.02
+
+    - support solaris
+
 0.01    Thu Oct  1 23:26:40 2009
         - original version

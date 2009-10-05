@@ -52,8 +52,9 @@ FUNCTIONS
         Module::Install::ForC::Env.
 
 FAQ
-        Currently GNU/Linux, and other POSIX systems, and OSX. (mattn-san
-        add the win32 support soon :P)
+    What is supported platform?
+        Currently GNU/Linux, OpenSolaris, and OSX. (mattn-san will add the
+        win32 support soon, I hope :P)
 
 AUTHOR
     Tokuhiro Matsuno <tokuhirom slkjfd gmail.com>
