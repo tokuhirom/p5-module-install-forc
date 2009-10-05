@@ -18,3 +18,5 @@ exe
 lib
 pkg
 stdlib
+API
+OpenSolaris
