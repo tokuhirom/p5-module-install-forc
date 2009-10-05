@@ -1,7 +1,7 @@
 package Module::Install::ForC;
 use strict;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 use 5.008000;
 use Module::Install::ForC::Env;
 use Config;
@@ -164,8 +164,10 @@ $env contains the build environment variables.The key name is a generic value fo
 
 =over 4
 
-Currently GNU/Linux, and other POSIX systems, and OSX.
-(mattn-san add the win32 support soon :P)
+=item What is supported platform?
+
+Currently GNU/Linux, OpenSolaris, and OSX.
+(mattn-san will add the win32 support soon, I hope :P)
 
 =back
 
