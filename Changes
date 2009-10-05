@@ -1,5 +1,9 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.03
+
+    - fixed packaging bug.
+
 0.02
 
     - support solaris
