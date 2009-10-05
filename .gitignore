@@ -28,3 +28,4 @@ inc/Module/Install/WriteAll.pm
 inc/Test/More.pm
 t/090_dist/test-0.01.tar.gz
 */*/MANIFEST.bak
+*.bak
