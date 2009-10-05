@@ -5,6 +5,8 @@ our $VERSION = '0.03';
 use 5.008000;
 use Module::Install::ForC::Env;
 use Config;
+use File::Basename 'basename';
+use FindBin;
 
 use Module::Install::Base;
 our @ISA     = qw(Module::Install::Base);
@@ -25,15 +27,17 @@ sub is_mac   () { $^O eq 'darwin' }
 sub WriteMakefileForC {
     my $self = shift;
 
+    my $src = $self->_gen_makefile();
+
     open my $fh, '>', 'Makefile' or die "cannot open file: $!";
-    print $fh $self->_gen_makefile();
+    print $fh $src;
     close $fh;
 }
 
 sub _gen_makefile {
     my $self = shift;
-    die "missing name\n" unless $self->name;
-    die "missing version\n" unless $self->version;
+    $self->name(basename($FindBin::Bin)) unless $self->name;
+    $self->version('') unless defined $self->version;
 
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
 RM=$Config{rm}
