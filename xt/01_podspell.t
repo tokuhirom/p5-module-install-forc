@@ -13,3 +13,8 @@ OSX
 mattn
 san
 POSIX
+cflags
+exe
+lib
+pkg
+stdlib
