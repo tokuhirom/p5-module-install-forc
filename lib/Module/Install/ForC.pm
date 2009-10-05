@@ -5,7 +5,7 @@ our $VERSION = '0.03';
 use 5.008000;
 use Module::Install::ForC::Env;
 use Config;
-use File::Basename 'basename';
+use File::Basename ();
 use FindBin;
 
 use Module::Install::Base;
@@ -36,7 +36,7 @@ sub WriteMakefileForC {
 
 sub _gen_makefile {
     my $self = shift;
-    $self->name(basename($FindBin::Bin)) unless $self->name;
+    $self->name(File::Basename::basename($FindBin::Bin)) unless $self->name;
     $self->version('') unless defined $self->version;
 
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
