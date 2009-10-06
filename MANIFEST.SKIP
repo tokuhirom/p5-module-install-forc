@@ -20,3 +20,6 @@
 \.git/
 \.o$
 \.bak$
+a\.out$
+^t/.+/inc/
+\.so$

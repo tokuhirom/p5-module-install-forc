@@ -1,7 +1,7 @@
 package Module::Install::ForC;
 use strict;
 use warnings;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 use 5.008000;
 use Module::Install::ForC::Env;
 use Config;              # first released with perl 5.00307

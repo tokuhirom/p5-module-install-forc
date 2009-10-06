@@ -1,5 +1,10 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.05
+
+    - win32 support(mattn++)
+    - do not create a.out file in current dir!
+
 0.04
 
     - $env->parse_config should return $env itself.
