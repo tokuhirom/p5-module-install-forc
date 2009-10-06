@@ -4,9 +4,9 @@ use warnings;
 our $VERSION = '0.04';
 use 5.008000;
 use Module::Install::ForC::Env;
-use Config;
-use File::Basename ();
-use FindBin;
+use Config;              # first released with perl 5.00307
+use File::Basename ();   # first released with perl 5
+use FindBin;             # first released with perl 5.00307
 
 use Module::Install::Base;
 our @ISA     = qw(Module::Install::Base);

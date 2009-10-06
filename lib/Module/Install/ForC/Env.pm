@@ -1,12 +1,12 @@
 package Module::Install::ForC::Env;
 use strict;
 use warnings;
-use Storable ();
-use Config;
-use File::Temp ();
-use POSIX;
-use Text::ParseWords ();
-use IPC::Open3;
+use Storable ();         # first released with perl 5.007003
+use Config;              # first released with perl 5.00307
+use File::Temp ();       # first released with perl 5.006001
+use POSIX;               # first released with perl 5
+use Text::ParseWords (); # first released with perl 5
+use IPC::Open3;          # first released with perl 5
 
 sub DEBUG () { $ENV{DEBUG} }
 
