@@ -11,6 +11,8 @@ unshift @INC, '../../lib';
 require inc::Module::Install;
 inc::Module::Install->import();
 
+unlink 'a.out' if -f 'a.out';
+
 my $env = env_for_c();
 
 ok $env->try_cc('int main () { }');
@@ -22,5 +24,6 @@ ok !$env->have_library('unknown-library');
 
 ok $env->have_type('pid_t', "#include <sys/types.h>\n") if $^O eq 'darwin' || $^O eq 'linux';
 ok !$env->have_type('unkonwn_type_t');
+ok !-f'a.out';
 
 done_testing;
