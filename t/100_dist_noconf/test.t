@@ -7,6 +7,7 @@ use FindBin;
 
 chdir(dirname(__FILE__));
 unlink '100_dist_noconf-.tar.gz' if -f '100_dist_noconf-.tar.gz';
+unlink 'MANIFEST' if -f 'MANIFEST';
 
 `$^X -I../../lib/ Makefile.PL`;
 `make manifest`;
