@@ -39,6 +39,7 @@ NOTE
 FUNCTIONS
     is_linux()
     is_mac()
+    is_win32()
         Is this the OS or not?
 
     WriteMakefileForC()
@@ -58,6 +59,8 @@ FAQ
 
 AUTHOR
     Tokuhiro Matsuno <tokuhirom slkjfd gmail.com>
+
+    mattn(win32 port)
 
 SEE ALSO
     This module is inspired by SCons(<http://www.scons.org/>).

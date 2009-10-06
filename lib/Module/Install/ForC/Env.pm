@@ -6,6 +6,7 @@ use Config;
 use File::Temp ();
 use POSIX;
 use Text::ParseWords ();
+use IPC::Open3;
 
 sub DEBUG () { $ENV{DEBUG} }
 
@@ -15,9 +16,6 @@ sub new {
     # platform specific vars
     my %platformvars = do {
         my %unix = (
-            CC  => $ENV{CC}  || 'gcc',
-            CPP => $ENV{CPP} || 'cpp',
-            CXX => $ENV{CXX} || 'g++',
             PREFIX        => $ENV{PREFIX} || '/usr/',
             LIBPREFIX     => 'lib',
             LIBSUFFIX     => '.a',
@@ -26,10 +24,7 @@ sub new {
             CCDLFLAGS     => ['-fPIC'], # TODO: rename
         );
         my %win32 = (
-            CC  => $ENV{CC}  || 'gcc',
-            CPP => $ENV{CPP} || 'cpp',
-            CXX => $ENV{CXX} || 'g++',
-            PREFIX      => 'C:\\',
+            PREFIX      => $ENV{PREFIX} || 'C:\\',
             LIBPREFIX   => '',
             LIBSUFFIX   => '.lib',
             SHLIBPREFIX => '',
@@ -48,6 +43,9 @@ sub new {
     };
 
     my $opt = {
+        CC  => $ENV{CC}  || $Config{cc}  || 'gcc',
+        CPP => $ENV{CPP} || $Config{cpp} || 'cpp',
+        CXX => $ENV{CXX} || (_has_gplusplus() ? 'g++' : $Config{cc}),
         LD            => $Config{ld},
         LDFLAGS       => '',
         CCFLAGS       => [],
@@ -56,7 +54,7 @@ sub new {
         LIBPATH       => [],
         SHLIBSUFFIX   => '.' . $Config{so},
         RANLIB        => 'ranlib',
-        PROGSUFFIX    => ( $Config{exe_ext} ? ( '.' . $Config{exe_ext} ) : '' ),
+        PROGSUFFIX    => $Config{exe_ext} || '', # $Config{exe_ext} is 'exe' or ''
         CXXFILESUFFIX => [ '.c++', '.cc', '.cpp', '.cxx' ],
         CFILESUFFIX   => ['.c'],
         AR            => $Config{ar},
@@ -78,6 +76,16 @@ sub new {
     }
 
     return $self;
+}
+
+# do you have g++?
+# @return true if user can execute g++.
+sub _has_gplusplus {
+    my($wtr, $rdr, $err);
+    my $pid = open3($wtr, $rdr, $err, 'g++', '--version') or return 0;
+    my $verstr = <$rdr>;
+    waitpid($pid, 0);
+    return $verstr =~ /^g\+\+/ ? 1 : 0;
 }
 
 # pkg-config
@@ -242,9 +250,10 @@ sub program {
 
     my $ld = $clone->_ld(@$srcs);
 
+    my $target_with_opt = ($self->{CC} =~ /^cl/ && $^O eq 'MSWin32') ? "/out:$target" : "-o $target";
     $self->_push_postamble(<<"...");
 $target: @objects
-	$ld $clone->{LDFLAGS} -o $target @objects @{[ $clone->_libpath ]} @{[ $clone->_libs ]}
+    $ld $clone->{LDFLAGS} $target_with_opt @objects @{[ $clone->_libpath ]} @{[ $clone->_libs ]}
 
 ...
 
@@ -260,7 +269,8 @@ sub _is_cpp {
 }
 
 sub _push_postamble {
-    $Module::Install::ForC::POSTAMBLE .= $_[1];
+    (my $src = $_[1]) =~ s/^[ ]{4}/\t/gmsx;
+    $Module::Install::ForC::POSTAMBLE .= $src;
 }
 
 sub _cpppath {
@@ -275,9 +285,10 @@ sub _compile_objects {
     for my $i (0..@$srcs-1) {
         next if $Module::Install::ForC::OBJECTS{$objects->[$i]}++ != 0;
         my $compiler = $self->_is_cpp($srcs->[$i]) ? $self->{CXX} : $self->{CC};
+        my $object_with_opt = ($compiler =~ /^cl/ && $^O eq 'MSWin32') ? "-c -Fo$objects->[$i]" : "-c -o $objects->[$i]";
         $self->_push_postamble(<<"...");
 $objects->[$i]: $srcs->[$i] Makefile
-	$compiler $opt @{ $self->{CCFLAGS} } @{[ $self->_cpppath ]} -c -o $objects->[$i] $srcs->[$i]
+	$compiler $opt @{ $self->{CCFLAGS} } @{[ $self->_cpppath ]} $object_with_opt $srcs->[$i]
 
 ...
     }

@@ -24,6 +24,7 @@ sub env_for_c {
 }
 sub is_linux () { $^O eq 'linux'  }
 sub is_mac   () { $^O eq 'darwin' }
+sub is_win32 () { $^O eq 'MSWin32' }
 sub WriteMakefileForC {
     my $self = shift;
 
@@ -86,7 +87,7 @@ distdir:
 clean:
 	\$(RM) @Module::Install::ForC::TARGETS @{[ keys %Module::Install::ForC::OBJECTS ]}
 	\$(RM) Makefile
-	$Config{rm_try}
+	@{[ $Config{rm_try} || '' ]}
 
 install: all
 	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
@@ -150,6 +151,8 @@ This is a early bate release! API will change later.
 
 =item is_mac()
 
+=item is_win32()
+
 Is this the OS or not?
 
 =item WriteMakefileForC()
@@ -178,6 +181,8 @@ Currently GNU/Linux, OpenSolaris, and OSX.
 =head1 AUTHOR
 
 Tokuhiro Matsuno E<lt>tokuhirom  slkjfd gmail.comE<gt>
+
+mattn(win32 port)
 
 =head1 SEE ALSO
 
