@@ -13,7 +13,8 @@ chdir(dirname(__FILE__));
     inc::Module::Install->import();
 
     my $env = env_for_c(LIBS => ['foo'], );
-    $env->parse_config('-lm -L/usr/local/lib/ -I /usr/local/include');
+    my $ret = $env->parse_config('-lm -L/usr/local/lib/ -I /usr/local/include');
+    is ref($ret), ref($env);
     is_deeply $env->{LIBS}, ['foo', 'm'];
     is_deeply $env->{LIBPATH}, ['/usr/local/lib/'];
     is_deeply $env->{CPPPATH}, ['/usr/local/include'];

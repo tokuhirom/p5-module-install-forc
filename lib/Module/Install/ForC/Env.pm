@@ -99,6 +99,7 @@ sub parse_config {
             next;
         };
     }
+    return $self;
 }
 
 sub install_bin {
@@ -405,6 +406,8 @@ Make shared library named $lib from \@src.
 Make static library named $lib from \@src.
 
 =item $env->parse_config(`pkg-config x11 --cflags --libs`)
+    
+    @return $env
 
 Parse configuration and merge to $env from pkg-config.
 
