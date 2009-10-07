@@ -34,7 +34,7 @@ DESCRIPTION
     autoconf/automake for easy case.
 
 NOTE
-    This is a early bate release! API will change later.
+    This is a early BETA release! API will change later.
 
 FUNCTIONS
     is_linux()
@@ -54,8 +54,7 @@ FUNCTIONS
 
 FAQ
     What is supported platform?
-        Currently GNU/Linux, OpenSolaris, and OSX. (mattn-san will add the
-        win32 support soon, I hope :P)
+        Currently GNU/Linux, OpenSolaris, Mac OSX, and MSWin32.
 
 AUTHOR
     Tokuhiro Matsuno <tokuhirom slkjfd gmail.com>
