@@ -24,3 +24,5 @@ a\.out$
 ^t/.+/inc/
 \.so$
 t/.+/main$
+\.a$
+t/.+/Makefile$
