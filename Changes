@@ -1,5 +1,11 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.06
+
+    - updated docs
+    - fixed packaging issue
+    - fixed g++ detection bug on osx
+
 0.05
 
     - win32 support(mattn++)
