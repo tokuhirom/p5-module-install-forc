@@ -20,3 +20,4 @@ pkg
 stdlib
 API
 OpenSolaris
+MSWin32
