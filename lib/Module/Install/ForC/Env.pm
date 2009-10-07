@@ -83,9 +83,8 @@ sub new {
 sub _has_gplusplus {
     my($wtr, $rdr, $err);
     my $pid = open3($wtr, $rdr, $err, 'g++', '--version') or return 0;
-    my $verstr = <$rdr>;
     waitpid($pid, 0);
-    return $verstr =~ /^g\+\+/ ? 1 : 0;
+    return WIFEXITED($?) && WEXITSTATUS($?) == 0 ? 1 : 0;
 }
 
 # pkg-config

@@ -141,7 +141,7 @@ M::Install is useful for Perl/XS programming, but this module provides M::I powe
 
 =head1 NOTE
 
-This is a early bate release! API will change later.
+This is a early BETA release! API will change later.
 
 =head1 FUNCTIONS
 
@@ -173,8 +173,7 @@ $env contains the build environment variables.The key name is a generic value fo
 
 =item What is supported platform?
 
-Currently GNU/Linux, OpenSolaris, and OSX.
-(mattn-san will add the win32 support soon, I hope :P)
+Currently GNU/Linux, OpenSolaris, Mac OSX, and MSWin32.
 
 =back
 
