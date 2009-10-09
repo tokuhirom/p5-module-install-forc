@@ -32,3 +32,4 @@ t/090_dist/test-0.01.tar.gz
 *.bak
 t/110_test/t/01_simple
 t/110_test/t/01_simple.t
+t/110_test/t/01_simple.o

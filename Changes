@@ -1,5 +1,12 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.07
+
+    - change test method(INCOMPATIBLE)
+    - detect header deps automatically(gcc -MM)
+    - check g++ exists using system() on win32.
+      (mattn)
+
 0.06
 
     - updated docs
