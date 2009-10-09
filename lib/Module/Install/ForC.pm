@@ -60,11 +60,13 @@ POSTOP = \$(NOECHO) \$(NOOP)
 DIST_DEFAULT = tardist
 DIST_CP = best
 PERLRUN = \$(PERL)
+TEST_VERBOSE=0
+TEST_FILES=@{[ $self->tests || '' ]}
 
 all: @Module::Install::ForC::TARGETS
 
 test: @TESTS
-	prove @{[ $self->tests || '' ]}
+    PERL_DL_NONLAZY=1 \$(PERLRUN) "-MExtUtils::Command::MM" "-e" "test_harness(\$(TEST_VERBOSE), 'inc')" \$(TEST_FILES)
 
 dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 
