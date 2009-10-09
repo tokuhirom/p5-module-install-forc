@@ -82,9 +82,13 @@ sub new {
 # @return true if user can execute g++.
 sub _has_gplusplus {
     my($wtr, $rdr, $err);
-    my $pid = open3($wtr, $rdr, $err, 'g++', '--version') or return 0;
-    waitpid($pid, 0);
-    return WIFEXITED($?) && WEXITSTATUS($?) == 0 ? 1 : 0;
+    if ($^O eq 'MSWin32') {
+        return !system('g++ --version 2> NUL > NUL');
+    } else {
+        my $pid = open3($wtr, $rdr, $err, 'g++', '--version') or return 0;
+        waitpid($pid, 0);
+        return WIFEXITED($?) && WEXITSTATUS($?) == 0 ? 1 : 0;
+    }
 }
 
 # pkg-config
