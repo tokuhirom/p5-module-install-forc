@@ -64,7 +64,7 @@ PERLRUN = \$(PERL)
 all: @Module::Install::ForC::TARGETS
 
 test: @TESTS
-	prove --exec "/bin/sh -c " @TESTS
+	prove @TESTS
 
 dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 

@@ -27,3 +27,5 @@ t/.+/main$
 \.a$
 t/.+/Makefile$
 t/.+/local/
+t/110_test/t/01_simple
+t/110_test/t/01_simple.t

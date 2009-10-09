@@ -247,7 +247,6 @@ sub program {
 
     my $target = "$bin" . $clone->{PROGSUFFIX};
     _push_target($target);
-    push @Module::Install::ForC::TESTS, $target if $target =~ m{^t/};
 
     my @objects = $clone->_objects($srcs);
 
@@ -263,6 +262,24 @@ $target: @objects
     $clone->_compile_objects($srcs, \@objects, '');
 
     return $target;
+}
+
+sub test {
+    my ($self, $binary, $src, %specific_opts) = @_;
+    my ($name,$path,$suffix) = File::Basename::fileparse($src, @{ $self->{CXXFILESUFFIX} }, @{ $self->{CFILESUFFIX} } );
+    my $test_prefix = File::Spec->catfile($path, $name);
+    my $test_file = "$test_prefix\.t";
+    my $test_executable = $self->program($binary, $src, %specific_opts);
+
+    $self->_push_postamble(<<"...");
+$test_file: $test_executable
+    \$(PERL) -e 'print "exec q{$test_executable} or die \$!"' > $test_file
+
+...
+
+    push @Module::Install::ForC::TESTS, $test_file;
+
+    return $test_file;
 }
 
 sub _is_cpp {
@@ -294,11 +311,11 @@ $objects->[$i]: $srcs->[$i] Makefile
 	$compiler $opt @{ $self->{CCFLAGS} } @{[ $self->_cpppath ]} $object_with_opt $srcs->[$i]
 
 ...
-        if ($^O ne 'MSWin32') {
+        if ($^O ne 'MSWin32' && $compiler ne 'tcc') {
             my $deps = `$compiler -MM $srcs->[$i]`;
             my $basedir = File::Basename::dirname($srcs->[$i]);
             $self->_push_postamble(<<"...") if $deps;
-$basedir$deps
+$basedir/$deps
 ...
         }
     }
@@ -418,6 +435,19 @@ make executable program named $binary from \@src.
 You can specify the environment variables for each program.
 
     $env->program('foo', ['foo.c'], LIBS => ['pthread']);
+
+=item $env->test($binary, $src, %opts)
+
+make executable test command named $binary from \@src.
+
+You can specify the environment variables for each test.
+
+    $env->test('t/01_simple', 't/01_simple.c', LIBS => ['pthread']);
+
+Then, you will get following files:
+
+    't/01_simple': executable test file
+    't/01_simple.t': test bootstrap script, written by perl
 
 =item $env->shared_library($lib, \@src, %opts)
 

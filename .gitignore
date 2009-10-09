@@ -30,3 +30,5 @@ t/090_dist/test-0.01.tar.gz
 */*/MANIFEST.bak
 */*/*.tar.gz
 *.bak
+t/110_test/t/01_simple
+t/110_test/t/01_simple.t
