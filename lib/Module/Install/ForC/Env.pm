@@ -266,9 +266,7 @@ $target: @objects
 
 sub test {
     my ($self, $binary, $src, %specific_opts) = @_;
-    my ($name,$path,$suffix) = File::Basename::fileparse($src, @{ $self->{CXXFILESUFFIX} }, @{ $self->{CFILESUFFIX} } );
-    my $test_prefix = File::Spec->catfile($path, $name);
-    my $test_file = "$test_prefix\.t";
+    my $test_file = "$binary\.t";
     my $test_executable = $self->program($binary, $src, %specific_opts);
 
     $self->_push_postamble(<<"...");
