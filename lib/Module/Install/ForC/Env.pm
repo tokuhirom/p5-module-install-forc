@@ -294,6 +294,13 @@ $objects->[$i]: $srcs->[$i] Makefile
 	$compiler $opt @{ $self->{CCFLAGS} } @{[ $self->_cpppath ]} $object_with_opt $srcs->[$i]
 
 ...
+        if ($^O ne 'MSWin32') {
+            my $deps = `$compiler -MM $srcs->[$i]`;
+            my $basedir = File::Basename::dirname($srcs->[$i]);
+            $self->_push_postamble(<<"...") if $deps;
+$basedir$deps
+...
+        }
     }
 }
 
