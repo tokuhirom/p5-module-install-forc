@@ -64,7 +64,7 @@ PERLRUN = \$(PERL)
 all: @Module::Install::ForC::TARGETS
 
 test: @TESTS
-	prove @TESTS
+	prove @{[ $self->tests || '' ]}
 
 dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 
