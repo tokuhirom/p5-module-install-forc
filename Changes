@@ -1,5 +1,11 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.08
+
+    - dded -g support
+    - added $env->enable_warnings
+    - these features are stallen from M::I::XSUtil
+
 0.07
 
     - change test method(INCOMPATIBLE)
