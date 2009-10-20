@@ -1,8 +1,14 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.09
+
+    - support some vars in Makefile by E::MM
+    - added .PHONY
+    - support custom postamble
+
 0.08
 
-    - dded -g support
+    - added -g support
     - added $env->enable_warnings
     - these features are stallen from M::I::XSUtil
 
