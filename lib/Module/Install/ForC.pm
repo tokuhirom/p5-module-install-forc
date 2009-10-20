@@ -66,7 +66,10 @@ dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 
 clean:
 	\$(RM_F) @Module::Install::ForC::TARGETS @{[ keys %Module::Install::ForC::OBJECTS ]}
+
+realclean :: clean
 	\$(RM_F) Makefile
+    \$(RM_RF) \$(DISTVNAME)
 	@{[ $Config{rm_try} || '' ]}
 
 install: all config
