@@ -12,6 +12,9 @@ sub DEBUG () { $ENV{DEBUG} }
 
 sub new {
     my $class = shift;
+    my $mi    = shift;
+    return if $mi eq '_top';
+    my %args = @_;
 
     # platform specific vars
     my %platformvars = do {
@@ -59,7 +62,7 @@ sub new {
         CFILESUFFIX   => ['.c'],
         AR            => $Config{ar},
         %platformvars,
-        @_
+        %args,
     };
     for my $key (qw/CPPPATH LIBS CLIBPATH LDMODULEFLAGS CCFLAGS/) {
         $opt->{$key} = [$opt->{$key}] unless ref $opt->{$key};
