@@ -40,13 +40,17 @@ sub _gen_makefile {
     $self->name(File::Basename::basename($FindBin::Bin)) unless $self->name;
     $self->version('') unless defined $self->version;
 
-    my $mm = ExtUtils::MM->new({NAME => $self->name});
-    my $mm_params = join("\n", map { $_.'='.$mm->{$_} } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN TEST_VERBOSE DISTVNAME/);
+    my $mm = ExtUtils::MM->new(
+        {
+            NAME         => $self->name,
+            VERSION      => $self->version,
+        }
+    );
+    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME/);
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
-NAME=@{[ $self->name ]}
-VERSION = @{[ $self->version ]}
-TEST_FILES=@{[ $self->tests || '' ]}
 $mm_params
+TEST_VERBOSE=0
+TEST_FILES=@{[ $self->tests || '' ]}
 
 .PHONY: all config static dynamic test linkext manifest blibdirs clean realclean disttest distdir
 
