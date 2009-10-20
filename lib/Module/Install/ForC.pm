@@ -46,7 +46,7 @@ sub _gen_makefile {
             VERSION      => $self->version,
         }
     );
-    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME ECHO/);
+    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME ECHO MAKE MV SUFFIX ZIP SHAR/);
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
 $mm_params
 TEST_VERBOSE=0
@@ -64,22 +64,6 @@ test: @TESTS
 
 dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 
-tardist: \$(NAME).tar.gz
-    \$(NOECHO) \$(NOOP)
-
-\$(NAME).tar.gz: distdir Makefile
-    \$(PREOP)
-    \$(TO_UNIX)
-    \$(TAR) \$(TARFLAGS) \$(DISTVNAME).tar \$(DISTVNAME)
-    \$(RM_RF) \$(DISTVNAME)
-    \$(COMPRESS) \$(DISTVNAME).tar
-    \$(POSTOP)
-
-distdir:
-    \$(RM_RF) \$(DISTVNAME)
-    \$(PERLRUN) "-MExtUtils::Manifest=manicopy,maniread" \\
-        -e "manicopy(maniread(),'\$(DISTVNAME)', '\$(DIST_CP)');"
-
 clean:
 	\$(RM_F) @Module::Install::ForC::TARGETS @{[ keys %Module::Install::ForC::OBJECTS ]}
 	\$(RM_F) Makefile
@@ -89,8 +73,19 @@ install: all config
 	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
     \$(NOECHO) \$(NOOP)
 
-manifest:
-	$^X -MExtUtils::Manifest -e 'ExtUtils::Manifest::mkmanifest()'
+@{[ $mm->metafile_target ]}
+
+@{[ $mm->distmeta_target ]}
+
+@{[ $mm->distdir ]}
+
+@{[ $mm->dist_test ]}
+
+# dist_basics
+@{[ $mm->dist_basics ]}
+
+# dist_core
+@{[ $mm->dist_core ]}
 
 @{[ $Module::Install::ForC::POSTAMBLE || '' ]}
 
