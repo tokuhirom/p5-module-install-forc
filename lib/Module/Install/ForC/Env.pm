@@ -303,7 +303,7 @@ sub test {
 
     $self->_push_postamble(<<"...");
 $test_file: $test_executable
-    \$(PERL) -e 'print "exec q{$test_executable} or die \$!"' > $test_file
+    \$(PERL) -e "print qq[exec q{$test_executable} or die \$!]" > $test_file
 
 ...
 
