@@ -4,14 +4,14 @@ use Test::More;
 use File::Basename;
 use Config;
 use FindBin;
+use t::Utils;
 
-chdir(dirname(__FILE__));
+setup;
+cleanup <assertlib*>;
 
 unshift @INC, '../../lib';
 require inc::Module::Install;
 inc::Module::Install->import();
-
-unlink 'a.out' if -f 'a.out';
 
 my $env = env_for_c();
 

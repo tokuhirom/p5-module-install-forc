@@ -4,14 +4,13 @@ use Test::More;
 use File::Basename;
 use Config;
 use FindBin;
+use t::Utils;
 
-chdir(dirname(__FILE__));
-unlink '100_dist_noconf-.tar.gz' if -f '100_dist_noconf-.tar.gz';
-unlink 'MANIFEST' if -f 'MANIFEST';
+setup;
 
-`$^X -I../../lib/ Makefile.PL`;
-`make manifest`;
-`make dist`;
+run_makefile_pl;
+run_make('manifest');
+run_make('dist');
 ok -f '100_dist_noconf-.tar.gz';
 
 done_testing;

@@ -1,16 +1,12 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Basename;
-use Config;
-use FindBin;
+use t::Utils;
 
-chdir(dirname(__FILE__));
-for (qw(./local/bin/hello Makefile), <./local/lib/*>, <./local/bin/*>) {
-    unlink $_ if -e $_;
-}
+setup;
+cleanup('local/bin/hello', <./local/lib/*>, <./local/bin/*>);
 
-mkdir './local/' unless -d './local/';
+mkdir './local/'     unless -d './local/';
 mkdir './local/bin/' unless -d './local/bin/';
 mkdir './local/lib/' unless -d './local/lib/';
 
@@ -31,8 +27,8 @@ is scalar(<./local/lib/*>), undef;
 
     WriteMakefileForC();
 }
-`make install`;
-`make clean` unless $ENV{DEBUG};
+run_make('install');
+run_make('clean');
 
 isnt scalar(<./local/bin/*>), undef;
 isnt scalar(<./local/lib/*>), undef;

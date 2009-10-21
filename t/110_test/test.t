@@ -4,16 +4,14 @@ use Test::More;
 use File::Basename;
 use Config;
 use FindBin;
+use t::Utils;
 
-chdir(dirname(__FILE__));
+
+setup;
 
 unshift @INC, "../../lib";
 require inc::Module::Install;
 inc::Module::Install->import();
-
-for (qw/a.out Makefile/) {
-    unlink $_ if -f $_;
-}
 
 {
     my $env = env_for_c();
@@ -24,8 +22,8 @@ for (qw/a.out Makefile/) {
     WriteMakefileForC();
 }
 
-`make`;
-my $x = `make test`;
+run_make();
+my $x = `$make test`;
 like $x, qr/All tests successful/;
 
 done_testing;

@@ -4,8 +4,9 @@ use Test::More;
 use File::Basename;
 use Config;
 use FindBin;
+use t::Utils;
 
-chdir(dirname(__FILE__));
+setup;
 
 {
     unshift @INC, '../../lib';

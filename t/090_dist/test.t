@@ -1,16 +1,14 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Basename;
-use Config;
 use FindBin;
+use t::Utils;
 
-chdir(dirname(__FILE__));
-unlink 'test-0.01.tar.gz' if -f 'test-0.01.tar.gz';
+setup;
 
-`$^X -I../../lib/ Makefile.PL`;
-`make manifest`;
-`make dist`;
+run_makefile_pl;
+run_make('manifest');
+run_make('dist');
 ok -f 'test-0.01.tar.gz';
 
 done_testing;

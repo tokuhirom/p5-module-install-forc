@@ -1,21 +1,15 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Basename;
-use Config;
+use t::Utils;
 
-my $make = $Config{make};
+setup();
+cleanup('main');
 
-chdir(dirname(__FILE__));
-
-for (qw/Makefile hello.o inc libhi.so hi.o main/) {
-    unlink $_ if -f $_ || -d $_;
-}
-
-system $^X,  '-I../../lib/', 'Makefile.PL';
+run_makefile_pl();
 ok -e 'Makefile';
-system "$make";
+run_make();
 is `LD_LIBRARY_PATH=. ./main`, "hi\n";
-`$make clean`;
+run_make('clean');
 
 done_testing;

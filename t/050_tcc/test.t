@@ -3,17 +3,15 @@ use warnings;
 use Test::More;
 use File::Basename;
 use Config;
+use t::Utils;
 
 plan skip_all => 'this test requires /usr/bin/tcc' unless -x '/usr/bin/tcc';
 
-chdir(dirname(__FILE__));
-for (qw/Makefile main.o main inc/) {
-    unlink $_ if -f $_ || -d $_;
-}
+setup;
 
-system $^X,  '-I../../lib/', 'Makefile.PL';
+run_makefile_pl;
 ok -e 'Makefile';
-system $Config{make};
+run_make();
 is `./main`, 'Hello, world!';
 
 done_testing;

@@ -3,17 +3,16 @@ use warnings;
 use Test::More;
 use File::Basename;
 use Config;
+use t::Utils;
 
-chdir(dirname(__FILE__));
-for (qw/Makefile hello.o inc/) {
-    unlink $_ if -f $_ || -d $_;
-}
+setup;
+cleanup(qw/Makefile hello.o inc/);
 
-system $^X,  '-I../../lib/', 'Makefile.PL';
+run_makefile_pl();
 ok -e 'Makefile';
-system $Config{make};
+run_make();
 is `./hello`, 'Hello, world!';
-`make clean`;
+run_make('clean');
 ok !-e'hello.o';
 
 done_testing;
