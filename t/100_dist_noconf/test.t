@@ -6,6 +6,8 @@ use Config;
 use FindBin;
 use t::Utils;
 
+plan skip_all => "This test requires tar, but win32 doesn't have it" if $^O eq 'MSWin32';
+
 setup;
 
 run_makefile_pl;
