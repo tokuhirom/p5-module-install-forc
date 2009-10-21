@@ -62,7 +62,7 @@ config :: \$(FIRST_MAKEFILE)
     \$(NOECHO) \$(NOOP)
 
 test: @TESTS
-    @{[ $mm->test_via_harness('\$(FULLPERLRUN)', '\$(TEST_FILES)') ]}
+    @{[ $mm->test_via_harness('$(FULLPERLRUN)', '$(TEST_FILES)') ]}
 
 dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 
