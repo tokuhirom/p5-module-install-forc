@@ -36,3 +36,4 @@ t/110_test/t/01_simple.o
 t/120_disttest/Clib-disttestsample-0.01/
 t/120_disttest/MANIFEST
 t/120_disttest/t/01_simple
+t/120_disttest/t/01_simple.o
