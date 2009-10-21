@@ -169,7 +169,11 @@ sub try_cc {
     my $cmd = "$self->{CC} -o $executable @{[ $self->_libs ]} @{[ $self->_cpppath ]} @{ $self->{CCFLAGS} } $cfile";
     print "$cmd\n" if DEBUG;
     my $exit_status = _quiet_system($cmd);
-    WIFEXITED($exit_status) && WEXITSTATUS($exit_status) == 0 ? 1 : 0;
+    if ($^O eq 'MSWin32') {
+        return $exit_status == 0 ? 1 : 0;
+    } else {
+        return WIFEXITED($exit_status) && WEXITSTATUS($exit_status) == 0 ? 1 : 0;
+    }
 }
 
 # code substantially borrowed from IPC::Run3                                                                                          
