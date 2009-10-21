@@ -9,7 +9,8 @@ cleanup('main');
 run_makefile_pl();
 ok -e 'Makefile';
 run_make();
-is `LD_LIBRARY_PATH=. ./main`, "hi\n";
+my $prefix = $^O eq 'linux' ? 'LD_LIBRARY_PATH=.' : '';
+is `$prefix ./main`, "hi\n";
 run_make('clean');
 
 done_testing;
