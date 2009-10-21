@@ -154,7 +154,7 @@ sub install {
     my $dst = File::Spec->catfile($self->{PREFIX}, $suffix);
     ($target =~ m{['"\n\{\}]}) and die "invalid file name for install: $target";
     ($suffix =~ m{['"\n\{\}]}) and die "invalid file name for install: $suffix";
-    push @{$Module::Install::ForC::INSTALL{$suffix}}, "\$(PERL) -e 'use File::Copy; File::Copy::copy(q{$target}, q{$dst}) or die qq{Copy failed: $!}'";
+    push @{$Module::Install::ForC::INSTALL{$suffix}}, qq[\$(PERL) -e "use File::Copy; File::Copy::copy(q{$target}, q{$dst}) or die qq{Copy failed: \$!}"];
 }
 
 sub try_cc {
