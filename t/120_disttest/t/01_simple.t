@@ -1,1 +1,1 @@
-exec q{t/01_simple} or die 
+exec q!t/01_simple! or die 
