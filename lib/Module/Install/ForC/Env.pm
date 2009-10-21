@@ -67,7 +67,7 @@ sub new {
     for my $key (qw/CPPPATH LIBS CLIBPATH LDMODULEFLAGS CCFLAGS/) {
         $opt->{$key} = [$opt->{$key}] unless ref $opt->{$key};
     }
-    my $self = bless $opt, $class;
+    my $self = bless {mi => $mi, %$opt}, $class;
 
     # -g support
     if (scalar( grep{ $_ eq '-g' } @ARGV )) {
