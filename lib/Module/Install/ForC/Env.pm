@@ -64,6 +64,9 @@ sub new {
         %platformvars,
         %args,
     };
+    if ($opt->{CXX} =~ /g\+\+$/) {
+        $opt->{LDMODULEFLAGS} = ['-shared'];
+    }
     for my $key (qw/CPPPATH LIBS CLIBPATH LDMODULEFLAGS CCFLAGS/) {
         $opt->{$key} = [$opt->{$key}] unless ref $opt->{$key};
     }
