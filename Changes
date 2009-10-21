@@ -1,5 +1,13 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.10
+
+    - refactoring and support dmake
+    - use EMM->test_via_harness
+    - support distclean more.
+    - use more thing from E::MM
+    - added disttest support
+
 0.09
 
     - support some vars in Makefile by E::MM
