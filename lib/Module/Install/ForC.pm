@@ -46,13 +46,15 @@ sub _gen_makefile {
             VERSION      => $self->version,
         }
     );
-    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME ECHO MAKE MV SUFFIX ZIP SHAR FULLPERLRUN FULLPERL/);
+    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME ECHO ECHO_N MAKE MV SUFFIX ZIP SHAR FULLPERLRUN FULLPERL USE_MAKEFILE FIXIN DOC_INSTALL UNINSTALL/);
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
 $mm_params
 TEST_VERBOSE=0
 TEST_FILES=@{[ $self->tests || '' ]}
 
 .PHONY: all config static dynamic test linkext manifest blibdirs clean realclean disttest distdir
+
+@{[ $mm->special_targets ]}
 
 all: @Module::Install::ForC::TARGETS
 
