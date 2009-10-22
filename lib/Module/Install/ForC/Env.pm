@@ -86,6 +86,13 @@ sub new {
         push @{$self->{CXXFILESUFFIX}}, '.C';
     }
 
+    if (my $inc = $mi->makemaker_args->{INC}) {
+        $self->append( CPPPATH => $inc );
+    }
+    if (my $libs = $mi->makemaker_args->{LIBS}) {
+        $self->append( LIBS    => $libs );
+    }
+
     return $self;
 }
 
