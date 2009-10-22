@@ -30,3 +30,4 @@ t/.+/main$
 ^t/110_test/t/01_simple$
 ^t/110_test/t/01_simple.t
 ^t/120_disttest/Clib-disttestsample-0.01/
+^t/130_write_header/test_config.h$

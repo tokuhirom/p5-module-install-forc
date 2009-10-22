@@ -14,6 +14,7 @@ sub new {
     my $class = shift;
     my $mi    = shift;
     return if $mi eq '_top';
+    return if @_ %2 != 0;
     my %args = @_;
 
     # platform specific vars
@@ -214,13 +215,24 @@ sub _quiet_system {
     return $rv;
 }
 
+sub _push_config_h {
+    my ($self, $key, $val) = @_;
+    $key =~ tr{a-z./\055}{A-Z___};
+    my $src = "#define HAVE_$key $val\n";
+    push @Module::Install::ForC::CONFIG_H, $src;
+}
+
 
 sub have_header {
     my ($self, $header,) = @_;
-    _checking_for(
+    my $ret = _checking_for(
         "C header $header",
         $self->try_cc("#include <$header>\nint main() { return 0; }")
     );
+    if ($ret) {
+        $self->_push_config_h($header => 1);
+    }
+    return $ret;
 }
 
 sub _checking_for {
@@ -231,10 +243,14 @@ sub _checking_for {
 
 sub have_library {
     my ($self, $library,) = @_;
-    _checking_for(
+    my $ret = _checking_for(
         "C library $library",
         $self->clone()->append( 'LIBS' => $library )->try_cc("int main(){return 0;}")
     );
+    if ($ret) {
+        $self->_push_config_h("LIB$library" => 1);
+    }
+    return $ret;
 }
 
 sub clone {

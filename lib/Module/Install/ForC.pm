@@ -16,6 +16,7 @@ our %OBJECTS;
 our $POSTAMBLE;
 our @TESTS;
 our %INSTALL;
+our @CONFIG_H;
 
 sub env_for_c {
     my $self = shift;
@@ -32,6 +33,21 @@ sub WriteMakefileForC {
 
     open my $fh, '>', 'Makefile' or die "cannot open file: $!";
     print $fh $src;
+    close $fh;
+}
+sub WriteHeaderForC {
+    my ($self, $fname) = @_;
+    $fname or die "Usage: WriteHeaderForC('foo_config.h')";
+    warn 'wriet';
+
+    (my $guard = $fname) =~ tr{a-z./\055}{A-Z___};
+
+    my $header = "#ifndef $guard\n"
+               . "#define $guard\n\n";
+    my $footer = "\n\n#endif  // $guard\n";
+
+    open my $fh, '>', $fname or die "cannot open file($fname): $!";
+    print $fh $header . join('', @CONFIG_H) . $footer;
     close $fh;
 }
 
