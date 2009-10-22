@@ -38,7 +38,6 @@ sub WriteMakefileForC {
 sub WriteHeaderForC {
     my ($self, $fname) = @_;
     $fname or die "Usage: WriteHeaderForC('foo_config.h')";
-    warn 'wriet';
 
     (my $guard = $fname) =~ tr{a-z./\055}{A-Z___};
 

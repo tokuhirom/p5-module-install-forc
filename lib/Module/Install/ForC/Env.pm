@@ -215,11 +215,13 @@ sub _quiet_system {
     return $rv;
 }
 
-sub _push_config_h {
+sub _add_def {
     my ($self, $key, $val) = @_;
     $key =~ tr{a-z./\055}{A-Z___};
-    my $src = "#define HAVE_$key $val\n";
-    push @Module::Install::ForC::CONFIG_H, $src;
+    $key = "HAVE_" . $key;
+
+    $self->append(CCFLAGS => ["-D$key=$val"]);
+    push @Module::Install::ForC::CONFIG_H, "#define $key $val\n";
 }
 
 
@@ -230,7 +232,7 @@ sub have_header {
         $self->try_cc("#include <$header>\nint main() { return 0; }")
     );
     if ($ret) {
-        $self->_push_config_h($header => 1);
+        $self->_add_def($header => 1);
     }
     return $ret;
 }
@@ -248,7 +250,8 @@ sub have_library {
         $self->clone()->append( 'LIBS' => $library )->try_cc("int main(){return 0;}")
     );
     if ($ret) {
-        $self->_push_config_h("LIB$library" => 1);
+        $self->append(CCFLAGS => "-DHAVE_LIB$library=1");
+        $self->_add_def("LIB$library" => 1);
     }
     return $ret;
 }
