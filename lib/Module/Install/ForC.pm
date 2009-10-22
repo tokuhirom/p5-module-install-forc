@@ -67,8 +67,6 @@ $mm_params
 TEST_VERBOSE=0
 TEST_FILES=@{[ $self->tests || '' ]}
 
-.PHONY: all config static dynamic test linkext manifest blibdirs clean realclean disttest distdir
-
 @{[ $mm->special_targets ]}
 
 all: @Module::Install::ForC::TARGETS
