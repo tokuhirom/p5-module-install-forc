@@ -88,10 +88,10 @@ sub new {
     }
 
     if (my $inc = $mi->makemaker_args->{INC}) {
-        $self->append( CPPPATH => $inc );
+        $self->parse_config($inc);
     }
     if (my $libs = $mi->makemaker_args->{LIBS}) {
-        $self->append( LIBS    => $libs );
+        $self->parse_config($libs);
     }
 
     return $self;
