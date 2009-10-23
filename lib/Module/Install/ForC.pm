@@ -61,7 +61,7 @@ sub _gen_makefile {
             VERSION      => $self->version,
         }
     );
-    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME ECHO ECHO_N MAKE MV SUFFIX ZIP SHAR FULLPERLRUN FULLPERL USE_MAKEFILE FIXIN DOC_INSTALL UNINSTALL CP INST_LIB INST_ARCHLIB/);
+    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME ECHO ECHO_N MAKE MV SUFFIX ZIP SHAR FULLPERLRUN FULLPERL USE_MAKEFILE FIXIN DOC_INSTALL UNINSTALL CP INST_LIB INST_ARCHLIB INST_LIBDIR DFSEP INST_AUTODIR INST_ARCHAUTODIR INST_BIN INST_SCRIPT INST_MAN1DIR INST_MAN3DIR MKPATH CHMOD TOUCH OBJ_EXT/);
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
 $mm_params
 TEST_VERBOSE=0
@@ -69,9 +69,9 @@ TEST_FILES=@{[ $self->tests || '' ]}
 
 @{[ $mm->special_targets ]}
 
-all: @Module::Install::ForC::TARGETS
+@{[ $mm->top_targets ]}
 
-config :: \$(FIRST_MAKEFILE)
+all :: @Module::Install::ForC::TARGETS
     \$(NOECHO) \$(NOOP)
 
 test: @TESTS
@@ -83,13 +83,15 @@ clean:
 	\$(RM_F) @Module::Install::ForC::TARGETS @{[ keys %Module::Install::ForC::OBJECTS ]}
 
 realclean :: clean
-	\$(RM_F) Makefile
+	\$(RM_F) Makefile pm_to_blib
     \$(RM_RF) \$(DISTVNAME)
 	@{[ $Config{rm_try} || '' ]}
 
 install: all config
 	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
     \$(NOECHO) \$(NOOP)
+
+@{[ join "\n", map { "\n# $_\n" . $mm->$_ } qw/manifypods_target pm_to_blib/ ]}
 
 @{[ $mm->metafile_target ]}
 
@@ -98,6 +100,10 @@ install: all config
 @{[ $mm->distdir ]}
 
 @{[ $mm->dist_test ]}
+
+@{[ $mm->blibdirs_target ]}
+
+@{[ $mm->makefile ]}
 
 # dist_basics
 @{[ $mm->dist_basics ]}
