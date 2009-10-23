@@ -79,7 +79,7 @@ sub new {
     }
 
     # fucking '.C' extension support.
-    if ($^O eq 'Win32' || $^O eq 'darwin') {
+    if ($^O eq 'MSWin32' || $^O eq 'darwin') {
         # case sensitive fs.Yes, I know the darwin supports case-sensitive fs.
         # But, also supports case-insensitive one :)
         push @{$self->{CFILESUFFIX}}, '.C';
