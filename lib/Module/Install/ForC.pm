@@ -43,7 +43,7 @@ sub WriteHeaderForC {
 
     my $header = "#ifndef $guard\n"
                . "#define $guard\n\n";
-    my $footer = "\n\n#endif  // $guard\n";
+    my $footer = "\n\n#endif  /* $guard */\n";
     if (my $version = $self->version) {
         (my $verkey = $self->name) =~ s/^Clib-//;
         $verkey =~ tr{a-z./\055}{A-Z___};
