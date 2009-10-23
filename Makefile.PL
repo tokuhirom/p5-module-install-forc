@@ -8,6 +8,7 @@ requires 'Module::Install';
 
 tests 't/*.t t/*/*.t';
 recursive_author_tests('xt');
+test_requires 'Test::Requires';
 
 if (-d '.git') { # author
     `rm -rf t/*/Makefile t/*/inc t/*/main t/*/*.gz t/*/*.o t/*/local t/*/Makefile.bak t/*/*.bak t/*/*.a t/*/*.so`;

@@ -13,7 +13,7 @@ our $make =  $Config{make};
 
 sub setup {
     chdir(dirname([caller(0)]->[1]));
-    cleanup(<*.so>, <*.dll>, <*.o>, 'inc', 'Makefile', 'main', 'a.out', <*.gz>, 'MANIFEST');
+    cleanup(<*.so>, <*.dll>, <*.o>, 'inc', 'Makefile', 'main', 'a.out', <*.gz>, 'MANIFEST', 'blib');
 }
 
 sub cleanup {
