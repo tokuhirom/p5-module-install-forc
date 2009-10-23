@@ -88,7 +88,7 @@ realclean :: clean
     \$(RM_RF) \$(DISTVNAME)
 	@{[ $Config{rm_try} || '' ]}
 
-install: all config
+install :: all config
 	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
     \$(NOECHO) \$(NOOP)
 
