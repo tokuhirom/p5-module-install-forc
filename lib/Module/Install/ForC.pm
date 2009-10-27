@@ -98,29 +98,12 @@ install :: all config
 	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
     \$(NOECHO) \$(NOOP)
 
-@{[ join "\n", map { "\n# $_\n" . $mm->$_ } qw/manifypods_target pm_to_blib/ ]}
-
-@{[ $mm->metafile_target ]}
-
-@{[ $mm->distmeta_target ]}
-
-@{[ $mm->distdir ]}
-
-@{[ $mm->dist_test ]}
-
-@{[ $mm->blibdirs_target ]}
-
-@{[ $mm->makefile ]}
-
-# dist_basics
-@{[ $mm->dist_basics ]}
-
-# dist_core
-@{[ $mm->dist_core ]}
+@{[ join "\n", map { "\n# $_\n" . $mm->$_ } qw/manifypods_target pm_to_blib metafile_target distmeta_target distdir dist_test blibdirs_target makefile dist_basics dist_core/ ]}
 
 @{[ $Module::Install::ForC::POSTAMBLE || '' ]}
 
 @{[ $self->postamble || '' ]}
+
 ...
     $make;
 }
