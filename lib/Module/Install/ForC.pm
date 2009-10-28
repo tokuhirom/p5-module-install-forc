@@ -29,7 +29,7 @@ sub is_win32 () { $^O eq 'MSWin32' }
 sub WriteMakefileForC {
     my $self = shift;
 
-    my $src = $self->_gen_makefile();
+    $self->_finalize();
     $self->WriteMakefile();
 }
 sub WriteHeaderForC {
@@ -53,7 +53,7 @@ sub WriteHeaderForC {
     close $fh;
 }
 
-sub _gen_makefile {
+sub _finalize {
     my $self = shift;
 
     $self->makemaker_args(
