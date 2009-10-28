@@ -1,5 +1,15 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.20
+
+    - use Module::Install/E::MM directly
+    - WriteMakefileForC is deprecated.
+    - generate version macro automatically
+    - added test case for  Clib.
+    - use pm_to_blib
+    - added docs for WriteHeaderForC
+    - support config.h
+
 0.11
 
     - support makemaker_args vars

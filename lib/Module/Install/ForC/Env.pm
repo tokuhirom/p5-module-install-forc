@@ -336,7 +336,7 @@ sub test {
 $test_file: $test_executable
     \$(ABSPERLRUN) -I\$(INST_LIB) -e "print qq[exec q!$test_executable! or die \$!]" > $test_file
 
-test :: $test_file
+pure_all :: $test_file
     \$(NOECHO) \$(NOOP)
 
 ...

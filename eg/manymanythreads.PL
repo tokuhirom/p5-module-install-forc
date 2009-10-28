@@ -17,5 +17,5 @@ $env->program('picoev_httpd' => ["picoev_httpd.c", $picoev, 'picohttpparser/pico
     $mtenv->program('mt_httpd' => ["mt_httpd.c", 'picohttpparser/picohttpparser.c'], LIBS => ['pthread']);
 }
 
-WriteMakefileForC();
+WriteMakefile();
 

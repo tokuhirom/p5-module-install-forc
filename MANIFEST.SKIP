@@ -32,3 +32,10 @@ t/.+/main$
 ^t/120_disttest/Clib-disttestsample-0.01/
 ^t/130_write_header/test_config.h$
 ^t/.+/inst/[^.]+
+\.sw[poq]$
+^t/.+/blib/
+^t/.+/pm_to_blib$
+^t/.+/META.yml$
+^t/.+/\.exists$
+\.bs$
+/MANIFEST$
