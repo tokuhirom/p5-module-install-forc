@@ -16,18 +16,17 @@ our @CONFIG_H;
 
 sub env_for_c {
     my $self = shift;
+    $self->_forc_initialize();
     $self->admin->copy_package('Module::Install::ForC::Env');
     Module::Install::ForC::Env->new($self, @_)
 }
 sub is_linux () { $^O eq 'linux'  }
 sub is_mac   () { $^O eq 'darwin' }
 sub is_win32 () { $^O eq 'MSWin32' }
-sub WriteMakefileForC {
-    my $self = shift;
 
-    $self->_finalize();
-    $self->WriteMakefile();
-}
+# (DEPRECATED)
+sub WriteMakefileForC { shift->WriteMakefile(@_) }
+
 sub WriteHeaderForC {
     my ($self, $fname) = @_;
     $fname or die "Usage: WriteHeaderForC('foo_config.h')";
@@ -49,14 +48,18 @@ sub WriteHeaderForC {
     close $fh;
 }
 
-sub _finalize {
-    my $self = shift;
+{
+    my $initialized = 0;
+    sub _forc_initialize {
+        return if $initialized++;
 
-    $self->makemaker_args(
-        # linking, compiling is job for ForC.
-        C      => [],
-        OBJECT => '',
-    );
+        my $self = shift;
+        $self->makemaker_args(
+            # linking, compiling is job for ForC.
+            C      => [],
+            OBJECT => '',
+        );
+    }
 }
 
 1;
@@ -74,7 +77,7 @@ Module::Install::ForC - the power of M::I for C programs
     my $env = env_for_c(CPPPATH => ['picoev/', 'picohttpparser/']);
     $env->program('testechoclient' => ["testechoclient.c"]);
 
-    WriteMakefileForC();
+    WriteMakefile();
 
     # then, you will get the Makefile:
     all: testechoclient
@@ -113,10 +116,6 @@ This is a early BETA release! API will change later.
 =item is_win32()
 
 Is this the OS or not?
-
-=item WriteMakefileForC()
-
-Write makefile in M::I::ForC style.
 
 =item WriteHeaderForC("config.h")
 
