@@ -1,4 +1,5 @@
 use inc::Module::Install;
+license 'perl';
 
 my $env = env_for_c();
 my $test = $env->test('t/01_simple', 't/01_simple.c');

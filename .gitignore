@@ -40,3 +40,4 @@ t/120_disttest/t/01_simple.o
 inc/
 t/130_write_header/test_config.h
 t/140_clib/inst/auto/Clib/include/test/foo.h
+t/140_clib/inst/

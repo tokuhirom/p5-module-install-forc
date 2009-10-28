@@ -30,10 +30,7 @@ sub WriteMakefileForC {
     my $self = shift;
 
     my $src = $self->_gen_makefile();
-
-    open my $fh, '>', 'Makefile' or die "cannot open file: $!";
-    print $fh $src;
-    close $fh;
+    $self->WriteMakefile();
 }
 sub WriteHeaderForC {
     my ($self, $fname) = @_;
@@ -58,45 +55,18 @@ sub WriteHeaderForC {
 
 sub _gen_makefile {
     my $self = shift;
-    $self->name(File::Basename::basename($FindBin::Bin)) unless $self->name;
-    $self->version('') unless defined $self->version;
 
-    my $mm = ExtUtils::MM->new(
-        {
-            NAME         => $self->name,
-            VERSION      => $self->version,
-            HAS_LINK_CODE => 0, # linking, compiling is working in ForC.
-            %{ $self->makemaker_args }
-        }
+    $self->makemaker_args(
+        # linking, compiling is job for ForC.
+        C      => [],
+        OBJECT => '',
     );
-    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } grep !/^_/, keys %$mm);
-    my $render = sub {
-        join "\n", map { "\n# $_\n" . $mm->$_ } @_
-    };
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
-TEST_VERBOSE=0
-TEST_FILES=@{[ $self->tests || '' ]}
-
-@{[ $render->(qw/post_initialize const_config constants platform_constants tool_autosplit tool_xsubpp tools_other/) ]}
-@{[ $render->(qw//) ]}
-@{[ $render->(qw/dist macro depend cflags const_loadlibs const_cccmd post_constants/) ]}
-@{[ $render->(qw/pasthru/) ]}
-@{[ $render->(qw/special_targets/) ]}
-@{[ $render->(qw/c_o xs_c xs_o/) ]}
-@{[ $render->(qw/top_targets  linkext dlsyms dynamic dynamic_bs/) ]}
-@{[ $render->(qw/dynamic_lib static static_lib manifypods processPL/) ]}
-@{[ $render->(qw/installbin subdirs/) ]}
-@{[ $render->(qw/clean realclean clean_subdirs_target realclean_subdirs_target/) ]}
-@{[ $render->(qw//) ]}
-@{[ $render->(qw/dist_basics dist_core distdir dist_test dist_ci/) ]}
-@{[ $render->(qw/install force perldepend makefile staticmake test ppd/) ]}
-@{[ $render->(qw/pm_to_blib metafile_target distmeta_target signature_target distsignature_target blibdirs_target/) ]}
-
 config :: @Module::Install::ForC::TARGETS
     \$(NOECHO) \$(NOOP)
 
 test :: @TESTS
-    @{[ $mm->test_via_harness('$(FULLPERLRUN)', '$(TEST_FILES)') ]}
+    \$(NOECHO) \$(NOOP)
 
 dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 
@@ -109,10 +79,8 @@ install :: all config
 
 @{[ $Module::Install::ForC::POSTAMBLE || '' ]}
 
-@{[ $self->postamble || '' ]}
-
 ...
-    $make;
+    $self->postamble($make);
 }
 
 1;
