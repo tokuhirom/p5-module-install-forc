@@ -11,11 +11,7 @@ use FindBin;             # first released with perl 5.00307
 use Module::Install::Base;
 our @ISA     = qw(Module::Install::Base);
 
-our @TARGETS;
 our %OBJECTS;
-our $POSTAMBLE;
-our @TESTS;
-our %INSTALL;
 our @CONFIG_H;
 
 sub env_for_c {
@@ -61,26 +57,6 @@ sub _finalize {
         C      => [],
         OBJECT => '',
     );
-    (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
-config :: @Module::Install::ForC::TARGETS
-    \$(NOECHO) \$(NOOP)
-
-test :: @TESTS
-    \$(NOECHO) \$(NOOP)
-
-dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
-
-clean ::
-	\$(RM_F) @Module::Install::ForC::TARGETS @{[ keys %Module::Install::ForC::OBJECTS ]}
-
-install :: all config
-	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
-    \$(NOECHO) \$(NOOP)
-
-@{[ $Module::Install::ForC::POSTAMBLE || '' ]}
-
-...
-    $self->postamble($make);
 }
 
 1;
