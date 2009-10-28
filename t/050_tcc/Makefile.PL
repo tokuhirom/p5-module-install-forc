@@ -6,5 +6,5 @@ license 'perl';
 my $env = env_for_c(CC => 'tcc');
 $env->program('main' => ["main.c"]);
 
-WriteMakefileForC();
+WriteMakefile();
 

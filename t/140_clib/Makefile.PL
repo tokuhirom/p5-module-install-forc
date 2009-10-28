@@ -9,5 +9,5 @@ makemaker_args(
     INSTALLARCHLIB => './inst/',
 );
 
-WriteMakefileForC();
+WriteMakefile();
 

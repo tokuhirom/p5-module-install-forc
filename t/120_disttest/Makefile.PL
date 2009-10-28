@@ -11,4 +11,4 @@ my $test = $env->test('t/01_simple', 't/01_simple.c');
 
 tests('t/*.t');
 
-WriteMakefileForC();
+WriteMakefile();
