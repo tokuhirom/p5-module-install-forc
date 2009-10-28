@@ -65,40 +65,47 @@ sub _gen_makefile {
         {
             NAME         => $self->name,
             VERSION      => $self->version,
+            HAS_LINK_CODE => 0, # linking, compiling is working in ForC.
             %{ $self->makemaker_args }
         }
     );
-    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } qw/FIRST_MAKEFILE MOD_INSTALL ABSPERL ABSPERLRUN VERBINST UNINST PERM_DIR PERL PREOP TRUE TAR RM_F RM_RF NOECHO NOOP INSTALLARCHLIB INSTALL_BASE DIST_CP DIST_DEFAULT POSTOP COMPRESS TARFLAGS TO_UNIX PERLRUN DISTVNAME VERSION NAME ECHO ECHO_N MAKE MV SUFFIX ZIP SHAR FULLPERLRUN FULLPERL USE_MAKEFILE FIXIN DOC_INSTALL UNINSTALL CP INST_LIB INST_ARCHLIB INST_LIBDIR DFSEP INST_AUTODIR INST_ARCHAUTODIR INST_BIN INST_SCRIPT INST_MAN1DIR INST_MAN3DIR MKPATH CHMOD TOUCH OBJ_EXT/);
+    my $mm_params = join("\n", map { $_.'='.($mm->{$_} || '') } grep !/^_/, keys %$mm);
+    my $render = sub {
+        join "\n", map { "\n# $_\n" . $mm->$_ } @_
+    };
     (my $make = <<"...") =~ s/^[ ]{4}/\t/gmsx;
-$mm_params
 TEST_VERBOSE=0
 TEST_FILES=@{[ $self->tests || '' ]}
 
-@{[ $mm->special_targets ]}
+@{[ $render->(qw/post_initialize const_config constants platform_constants tool_autosplit tool_xsubpp tools_other/) ]}
+@{[ $render->(qw//) ]}
+@{[ $render->(qw/dist macro depend cflags const_loadlibs const_cccmd post_constants/) ]}
+@{[ $render->(qw/pasthru/) ]}
+@{[ $render->(qw/special_targets/) ]}
+@{[ $render->(qw/c_o xs_c xs_o/) ]}
+@{[ $render->(qw/top_targets  linkext dlsyms dynamic dynamic_bs/) ]}
+@{[ $render->(qw/dynamic_lib static static_lib manifypods processPL/) ]}
+@{[ $render->(qw/installbin subdirs/) ]}
+@{[ $render->(qw/clean realclean clean_subdirs_target realclean_subdirs_target/) ]}
+@{[ $render->(qw//) ]}
+@{[ $render->(qw/dist_basics dist_core distdir dist_test dist_ci/) ]}
+@{[ $render->(qw/install force perldepend makefile staticmake test ppd/) ]}
+@{[ $render->(qw/pm_to_blib metafile_target distmeta_target signature_target distsignature_target blibdirs_target/) ]}
 
-@{[ $mm->top_targets ]}
-
-all :: @Module::Install::ForC::TARGETS
+config :: @Module::Install::ForC::TARGETS
     \$(NOECHO) \$(NOOP)
 
-test: @TESTS
+test :: @TESTS
     @{[ $mm->test_via_harness('$(FULLPERLRUN)', '$(TEST_FILES)') ]}
 
 dist: \$(DIST_DEFAULT) \$(FIRST_MAKEFILE)
 
-clean:
+clean ::
 	\$(RM_F) @Module::Install::ForC::TARGETS @{[ keys %Module::Install::ForC::OBJECTS ]}
-
-realclean :: clean
-	\$(RM_F) Makefile pm_to_blib
-    \$(RM_RF) \$(DISTVNAME)
-	@{[ $Config{rm_try} || '' ]}
 
 install :: all config
 	@{[ join("\n\t", map { @{ $_ } } values %Module::Install::ForC::INSTALL) ]}
     \$(NOECHO) \$(NOOP)
-
-@{[ join "\n", map { "\n# $_\n" . $mm->$_ } qw/manifypods_target pm_to_blib metafile_target distmeta_target distdir dist_test blibdirs_target makefile dist_basics dist_core/ ]}
 
 @{[ $Module::Install::ForC::POSTAMBLE || '' ]}
 
