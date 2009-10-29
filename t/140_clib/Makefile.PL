@@ -6,7 +6,9 @@ license 'perl';
 clib_header 'foo.h';
 
 makemaker_args(
-    INSTALLARCHLIB => './inst/',
+    INSTALLARCHLIB    => './inst/',
+    INSTALLSITEARCH   => './inst/',
+    INSTALLVENDORARCH => './inst/',
 );
 
 WriteMakefile();
