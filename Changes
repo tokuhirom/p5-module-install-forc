@@ -1,5 +1,9 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.21
+
+    - hmm fixed M::I related bug
+
 0.20
 
     - use Module::Install/E::MM directly
