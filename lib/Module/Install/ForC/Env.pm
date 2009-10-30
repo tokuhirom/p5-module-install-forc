@@ -353,7 +353,7 @@ sub _is_cpp {
 sub _push_postamble {
     my ($self, $src) = @_;
     $src =~ s/^[ ]{4}/\t/gmsx;
-    $self->{mi}->postamble($src);
+    main::postamble($src);
 }
 
 sub _cpppath {
