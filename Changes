@@ -1,5 +1,9 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.22
+
+    - fixed packaging issue
+
 0.21
 
     - hmm fixed M::I related bug
