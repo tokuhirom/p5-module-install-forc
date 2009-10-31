@@ -87,9 +87,6 @@ sub new {
         push @{$self->{CXXFILESUFFIX}}, '.C';
     }
 
-    if (my $inc = $mi->makemaker_args->{INC}) {
-        $self->parse_config($inc);
-    }
     if (my $libs = $mi->makemaker_args->{LIBS}) {
         $self->parse_config($libs);
     }
@@ -374,7 +371,7 @@ clean ::
 	\$(RM_F) $objects->[$i]
 
 $objects->[$i]: $srcs->[$i] Makefile
-	$compiler $opt @{ $self->{CCFLAGS} } @{[ $self->_cpppath ]} $object_with_opt $srcs->[$i]
+	$compiler \$(INC) $opt @{ $self->{CCFLAGS} } @{[ $self->_cpppath ]} $object_with_opt $srcs->[$i]
 
 ...
         if ($^O ne 'MSWin32' && $compiler ne 'tcc') {
