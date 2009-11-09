@@ -59,7 +59,7 @@ sub new {
         SHLIBSUFFIX   => '.' . $Config{so},
         RANLIB        => 'ranlib',
         PROGSUFFIX    => $Config{exe_ext} || '', # $Config{exe_ext} is 'exe' or ''
-        CXXFILESUFFIX => [ '.c++', '.cc', '.cpp', '.cxx' ],
+        CXXFILESUFFIX => [ '.c++', '.cc', '.cpp', '.cxx', '.mm', '.m' ],
         CFILESUFFIX   => ['.c'],
         AR            => $Config{ar},
         %platformvars,
