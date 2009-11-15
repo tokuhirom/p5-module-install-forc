@@ -4,7 +4,6 @@ use Test::More;
 use File::Basename;
 use Config;
 use FindBin;
-use File::Path 'remove_tree';
 use t::Utils;
 
 setup;
