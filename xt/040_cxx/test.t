@@ -3,6 +3,8 @@ use warnings;
 use Test::More;
 use t::Utils;
 
+# this test fails if c++ compiler is not installed
+
 setup();
 
 run_makefile_pl();
