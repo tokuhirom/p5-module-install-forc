@@ -1,5 +1,11 @@
 Revision history for Perl extension Module::Install::ForC
 
+0.24
+
+    - support objective-c++
+    - removed unused code.
+    - move this tests to xt/. because this test fails if c++ compiler is not installed
+
 0.23
 
     - fixed bug around shared library
